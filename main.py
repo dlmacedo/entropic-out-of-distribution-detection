@@ -70,7 +70,6 @@ def main():
     print("***************************************************************")
     print("***************************************************************")
 
-    all_experiment_results = {}
     for args.exp_input in args.exps_inputs:
         for args.exp_type in args.exps_types:
             for args.exp_config in args.exps_configs:
@@ -120,20 +119,10 @@ def main():
                     cnn_agent = agents.ClassifierAgent(args)
                     cnn_agent.train_classify()
 
-
                 experiment_results = pd.read_csv(os.path.join(os.path.join(args.experiment_path, "results_best.csv")))
                 print("\n################################\n", "EXPERIMENT RESULTS", "\n################################")
                 print(args.experiment_path)
                 print("\n", experiment_results.transpose())
-                print("\n", experiment_results.describe())
-
-                all_experiment_results[args.experiment_path] = experiment_results
-
-    print("\n\n\n\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n", "ALL EXPERIMENT RESULTS", "\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    for key in all_experiment_results:
-        print("\n", key)
-        print("\n", all_experiment_results[key].transpose())
-        print("\n", all_experiment_results[key].describe().reindex(['count', 'avg', 'std']))
 
 
 if __name__ == '__main__':

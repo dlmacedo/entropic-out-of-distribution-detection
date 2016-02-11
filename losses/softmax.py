@@ -4,12 +4,13 @@ import math
 
 
 class SoftMaxLossFirstPart(nn.Module):
-    def __init__(self, num_features, num_classes):
+    def __init__(self, num_features, num_classes, temperature=1.0):
         super(SoftMaxLossFirstPart, self).__init__()
         self.num_features = num_features
         self.num_classes = num_classes
         self.weights = nn.Parameter(torch.Tensor(num_classes, num_features))
         self.bias = nn.Parameter(torch.Tensor(num_classes))
+        self.temperature = temperature
         nn.init.uniform_(self.weights, a=-math.sqrt(1/self.num_features), b=math.sqrt(1/self.num_features))
         nn.init.zeros_(self.bias)
 
@@ -17,7 +18,8 @@ class SoftMaxLossFirstPart(nn.Module):
         #print("softmax loss first part")
         affines = features.matmul(self.weights.t()) + self.bias
         logits = affines
-        return logits
+        # The temperature may be calirated after training for improved predictive uncertainty estimation
+        return logits / self.temperature
 
 
 class SoftMaxLossSecondPart(nn.Module):

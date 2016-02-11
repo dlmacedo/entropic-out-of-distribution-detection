@@ -5,12 +5,13 @@ import torch
 
 class IsoMaxPlusLossFirstPart(nn.Module):
     """Replaces the model classifier last layer nn.Linear()"""
-    def __init__(self, num_features, num_classes):
+    def __init__(self, num_features, num_classes, temperature=1.0):
         super(IsoMaxPlusLossFirstPart, self).__init__()
         self.num_features = num_features
         self.num_classes = num_classes
         self.prototypes = nn.Parameter(torch.Tensor(num_classes, num_features))
         self.distance_scale = nn.Parameter(torch.Tensor(1)) 
+        self.temperature = temperature
         nn.init.normal_(self.prototypes, mean=0.0, std=1.0)
         nn.init.constant_(self.distance_scale, 1.0)
 
@@ -18,7 +19,8 @@ class IsoMaxPlusLossFirstPart(nn.Module):
         #print("isomax plus loss first part")
         distances = F.pairwise_distance(F.normalize(features).unsqueeze(2), F.normalize(self.prototypes).t().unsqueeze(0), p=2.0)
         logits = -torch.abs(self.distance_scale) * distances
-        return logits
+        # The temperature may be calirated after training for improved predictive uncertainty estimation
+        return logits / self.temperature
 
 
 class IsoMaxPlusLossSecondPart(nn.Module):
