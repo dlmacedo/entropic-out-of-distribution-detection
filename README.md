@@ -111,9 +111,9 @@ The paper "Entropic Out-of-Distribution Detection: Seamless Detection of Unknown
 
 <img align="center" src="assets/paper2_figure1.png" width="750">
 
-## A Seamless and High-Performance Out-of-Distribution Detection Approach Simply Replacing the SoftMax Loss
+## Enhanced Isotropy Maximization Loss: Seamless and High-Performance Out-of-Distribution Detection Simply Replacing the SoftMax Loss
 
-The paper "A Seamless and High-Performance Out-of-Distribution Detection Approach Simply Replacing the SoftMax Loss" [(arXiv)](https://arxiv.org/abs/2105.14399) proposes the Enhanced IsoMax (IsoMax+) loss that significantly improved the out-of-distribution detection performance relative to IsoMax loss while also keeping the solution seamless. The minimum distance score is used rather than the entropic score. Besides being seamless and easy to implement and use, this solution produces competitive state-of-the-art out-of-distribution detection results.
+The paper "Enhanced Isotropy Maximization Loss: Seamless and High-Performance Out-of-Distribution Detection Simply Replacing the SoftMax Loss" [(arXiv)](https://arxiv.org/abs/2105.14399) proposes the Enhanced IsoMax (IsoMax+) loss that significantly improved the out-of-distribution detection performance relative to IsoMax loss while also keeping the solution seamless. The minimum distance score is used rather than the entropic score. Besides being seamless and easy to implement and use, this solution produces competitive state-of-the-art out-of-distribution detection results.
 
 >>**From now on, use the IsoMax+ loss combined with the minimum distance score rather than the IsoMax loss combined with the entropic score.**
 
@@ -155,7 +155,7 @@ Please, cite our papers if you use our losses in your works:
 
 ```bibtex
 @misc{macêdo2021seamless,
-      title={A Seamless and High-Performance Out-of-Distribution Detection Approach Simply Replacing the SoftMax Loss}, 
+      title={Enhanced Isotropy Maximization Loss: Seamless and High-Performance Out-of-Distribution Detection Simply Replacing the SoftMax Loss}, 
       author={David Macêdo and Teresa Ludermir},
       year={2021},
       eprint={2105.14399},
