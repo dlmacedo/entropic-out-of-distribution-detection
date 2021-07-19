@@ -1,0 +1,16 @@
+__pycache__
+experiments/
+checkpoint/
+temporary/
+data/
+old/
+*.pth
+*.tar
+*.zip
+*.raw
+*.npy
+*.npz
+*.log
+*.pkl
+*.ipynb_checkpoints
+.vscode/
