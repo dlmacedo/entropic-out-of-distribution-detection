@@ -132,7 +132,7 @@ Please cite our papers if you use our losses in your works:
 ```
 
 ```bibtext
-@misc{macêdo2021improving,
+@article{macêdo2021improving,
       title={Improving Entropic Out-of-Distribution Detection using Isometric Distances and the Minimum Distance Score}, 
       author={David Macêdo and Teresa Ludermir},
       year={2021},
