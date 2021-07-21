@@ -117,3 +117,27 @@ score = outputs.max(dim=1)[0] # this is the minimum distance score
 ```
 python example.py
 ```
+
+# Citation
+
+Please cite our papers if you use our losses in your works:
+
+```bibtex
+@inproceedings{macêdo2021entropic,
+      title={Entropic Out-of-Distribution Detection}, 
+      author={David Macêdo and Tsang Ing Ren and Cleber Zanchettin and Adriano Oliveira and Teresa Ludermir},
+      booktitle={International Joint Conference on Neural Networks (IJCNN)},
+      year={2021},
+}
+```
+
+```bibtext
+@misc{macêdo2021improving,
+      title={Improving Entropic Out-of-Distribution Detection using Isometric Distances and the Minimum Distance Score}, 
+      author={David Macêdo and Teresa Ludermir},
+      year={2021},
+      eprint={2105.14399},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+```
