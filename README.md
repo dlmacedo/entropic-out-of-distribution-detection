@@ -6,45 +6,6 @@ We call our approach seamless because it neither presents special requirements (
 
 <img align="center" src="assets/ood_approaches_compared.PNG" width="750">
 
-___
-
-# Add out-of-distribution detection to your project!!!
-
-## Replace the SoftMax loss with the IsoMax loss changing two lines of code!!!
-
-### Replace the model classifier last layer with the Isometric IsoMax loss first part:
-
-```python
-class Model(nn.Module):
-    def __init__(self):
-    (...)
-    #self.classifier = nn.Linear(num_features, num_classes)
-    self.classifier = losses.IsoMaxIsometricLossFirstPart(num_features, num_classes)
-```
-
-### Replace the criterion by the Isometric IsoMax loss second part:
-
-```python
-model = Model()
-#criterion = nn.CrossEntropyLoss()
-criterion = losses.IsoMaxIsometricLossSecondPart(model.classifier)
-```
-
-### Detect using the minimum distance score:
-
-```python
-outputs = model(inputs)
-# outputs are equal to logits, which in turn are equivalent to negative distances
-score = outputs.max(dim=1)[0] # this is the minimum distance score
-# the minimum distance score is the best option for the Isometric IsoMax loss
-```
-
-### Run the example:
-
-```
-python example.py
-```
-
 # Papers
 
 ## Entropic Out-of-Distribution Detection (IJCNN 2021)
@@ -116,4 +77,43 @@ tar xvf LSUN_resize.tar.gz
 
 ```
 ./analize.sh ood
+```
+
+___
+
+# Add out-of-distribution detection to your project!!!
+
+## Replace the SoftMax loss with the IsoMax loss changing two lines of code!!!
+
+### Replace the model classifier last layer with the Isometric IsoMax loss first part:
+
+```python
+class Model(nn.Module):
+    def __init__(self):
+    (...)
+    #self.classifier = nn.Linear(num_features, num_classes)
+    self.classifier = losses.IsoMaxIsometricLossFirstPart(num_features, num_classes)
+```
+
+### Replace the criterion by the Isometric IsoMax loss second part:
+
+```python
+model = Model()
+#criterion = nn.CrossEntropyLoss()
+criterion = losses.IsoMaxIsometricLossSecondPart(model.classifier)
+```
+
+## Detect using the minimum distance score:
+
+```python
+outputs = model(inputs)
+# outputs are equal to logits, which in turn are equivalent to negative distances
+score = outputs.max(dim=1)[0] # this is the minimum distance score
+# the minimum distance score is the best option for the Isometric IsoMax loss
+```
+
+## Run the example:
+
+```
+python example.py
 ```
