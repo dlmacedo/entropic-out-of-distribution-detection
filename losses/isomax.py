@@ -28,6 +28,7 @@ class IsoMaxLossSecondPart(nn.Module):
 
     def forward(self, logits, targets, debug=False):
         """Logarithms and probabilities are calculate separately and sequentially"""
+        """Hence, nn.CrossEntropyLoss() must not be used!!!"""
         probabilities_for_training = nn.Softmax(dim=1)(self.entropic_scale * logits)
         probabilities_at_targets = probabilities_for_training[range(logits.size(0)), targets]
         loss = -torch.log(probabilities_at_targets).mean()
