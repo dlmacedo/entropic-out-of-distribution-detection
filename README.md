@@ -2,7 +2,7 @@
 
 <img align="center" src="assets/ood_task.png" width="750">
 
->>**We call our approach seamless because it neither presents special requirements (e.g., hyperparameter tuning, additional data) nor produces side effects (e.g., inefficient inference or out-of-distribution detection, classification accuracy drop). Our approach consists of a loss that works as a drop-in replacement to the SoftMax loss (i.e., the combination of the output linear layer, the SoftMax activation and the cross-entropy loss). The out-of-distribution detection is performed using a zero computational cost score.**
+>>**We call our approach seamless because it neither presents special requirements (e.g., hyperparameter tuning, additional data) nor produces side effects (e.g., inefficient inference or out-of-distribution detection, classification accuracy drop). Our approach consists of a loss that works as a drop-in replacement to the SoftMax loss (i.e., the combination of the output linear layer, the SoftMax activation, and the cross-entropy loss). The out-of-distribution detection is performed using a zero computational cost score.**
 
 <img align="center" src="assets/ood_approaches_compared.PNG" width="750">
 

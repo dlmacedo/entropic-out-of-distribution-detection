@@ -48,7 +48,7 @@ class ClassifierAgent:
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
 
         # create loss
-        self.criterion = loss_second_part(self.model.classifier).cuda()    
+        self.criterion = loss_second_part(self.model.classifier)    
 
         parameters = self.model.parameters()
         self.optimizer = torch.optim.SGD(
@@ -277,12 +277,10 @@ class ClassifierAgent:
         print()
         # switch to train mode
         self.model.train()
-        self.criterion.train()
 
         # Meters
         loss_meter = utils.MeanMeter()
         accuracy_meter = tnt.meter.ClassErrorMeter(topk=[1], accuracy=True)
-        odd_accuracy_meter = tnt.meter.ClassErrorMeter(topk=[1], accuracy=True)
         epoch_logits = {"intra": [], "inter": []}
         epoch_metrics = {"max_probs": [], "entropies": [], "max_logits": []}
 
@@ -294,15 +292,18 @@ class ClassifierAgent:
             targets = in_data[1].cuda(non_blocking=True)
 
             outputs = self.model(inputs)           
-            loss, cls_prob, odd_prob, max_logits, intra_logits, inter_logits = self.criterion(outputs, targets, debug=True)
+            loss, intra_logits, inter_logits = self.criterion(outputs, targets, debug=True)
+
+            max_logits = outputs.max(dim=1)[0]
+            probabilities = torch.nn.Softmax(dim=1)(outputs)
+            max_probs = probabilities.max(dim=1)[0]
+            entropies = utils.entropies_from_probabilities(probabilities)
+
+            loss_meter.add(loss.item(), targets.size(0))
+            accuracy_meter.add(outputs.detach(), targets.detach())
 
             intra_logits = intra_logits.tolist()
             inter_logits = inter_logits.tolist()
-            max_probs = odd_prob.max(dim=1)[0]
-            entropies = utils.entropies_from_probabilities(odd_prob)
-            loss_meter.add(loss.item(), targets.size(0))
-            accuracy_meter.add(cls_prob.detach(), targets.detach())
-            odd_accuracy_meter.add(odd_prob.detach(), targets.detach())
             if self.args.number_of_model_classes > 100:
                 epoch_logits["intra"] = intra_logits
                 epoch_logits["inter"] = inter_logits
@@ -322,10 +323,10 @@ class ClassifierAgent:
                 print('Train Epoch: [{0}][{1:3}/{2}]\t'
                       'Loss {loss:.8f}\t\t'
                       'Acc1 {acc1_meter:.2f}\t'
-                      'IADM {intra_logits_mean:.4f}\t'
-                      'IADS {intra_logits_std:.8f}\t\t'
-                      'IEDM {inter_logits_mean:.4f}\t'
-                      'IEDS {inter_logits_std:.8f}'
+                      'IALM {intra_logits_mean:.4f}\t'
+                      'IALS {intra_logits_std:.8f}\t\t'
+                      'IELM {inter_logits_mean:.4f}\t'
+                      'IELS {inter_logits_std:.8f}'
                       .format(self.epoch, batch_index, len(self.trainset_loader_for_train),
                               loss=loss_meter.avg,
                               acc1_meter=accuracy_meter.value()[0],
@@ -335,18 +336,16 @@ class ClassifierAgent:
                               inter_logits_std=statistics.stdev(inter_logits),))
 
         print('\n#### TRAIN ACC1:\t{0:.4f}\n\n'.format(accuracy_meter.value()[0]))
-        return loss_meter.avg, accuracy_meter.value()[0], odd_accuracy_meter.value()[0], epoch_logits, epoch_metrics
+        return loss_meter.avg, accuracy_meter.value()[0], accuracy_meter.value()[0], epoch_logits, epoch_metrics
 
     def validate_epoch(self):
         print()
         # switch to evaluate mode
         self.model.eval()
-        self.criterion.eval()
 
         # Meters
         loss_meter = utils.MeanMeter()
         accuracy_meter = tnt.meter.ClassErrorMeter(topk=[1], accuracy=True)
-        odd_accuracy_meter = tnt.meter.ClassErrorMeter(topk=[1], accuracy=True)
         epoch_logits = {"intra": [], "inter": []}
         epoch_metrics = {"max_probs": [], "entropies": [], "max_logits": []}
 
@@ -359,15 +358,18 @@ class ClassifierAgent:
                 targets = in_data[1].cuda(non_blocking=True)
 
                 outputs = self.model(inputs)
-                loss, cls_prob, odd_prob, max_logits, intra_logits, inter_logits = self.criterion(outputs, targets, debug=True)
+                loss, intra_logits, inter_logits = self.criterion(outputs, targets, debug=True)
+
+                max_logits = outputs.max(dim=1)[0]
+                probabilities = torch.nn.Softmax(dim=1)(outputs)
+                max_probs = probabilities.max(dim=1)[0]
+                entropies = utils.entropies_from_probabilities(probabilities)
+
+                loss_meter.add(loss.item(), targets.size(0))
+                accuracy_meter.add(outputs.detach(), targets.detach())
 
                 intra_logits = intra_logits.tolist()
                 inter_logits = inter_logits.tolist()
-                max_probs = odd_prob.max(dim=1)[0]
-                entropies = utils.entropies_from_probabilities(odd_prob)
-                loss_meter.add(loss.item(), inputs.size(0))
-                accuracy_meter.add(cls_prob.detach(), targets.detach())
-                odd_accuracy_meter.add(odd_prob.detach(), targets.detach())
                 if self.args.number_of_model_classes > 100:
                     epoch_logits["intra"] = intra_logits
                     epoch_logits["inter"] = inter_logits
@@ -382,10 +384,10 @@ class ClassifierAgent:
                     print('Valid Epoch: [{0}][{1:3}/{2}]\t'
                           'Loss {loss:.8f}\t\t'
                           'Acc1 {acc1_meter:.2f}\t'
-                          'IADM {intra_logits_mean:.4f}\t'
-                          'IADS {intra_logits_std:.8f}\t\t'
-                          'IEDM {inter_logits_mean:.4f}\t'
-                          'IEDS {inter_logits_std:.8f}'
+                          'IALM {intra_logits_mean:.4f}\t'
+                          'IALS {intra_logits_std:.8f}\t\t'
+                          'IELM {inter_logits_mean:.4f}\t'
+                          'IELS {inter_logits_std:.8f}'
                           .format(self.epoch, batch_index, len(self.valset_loader),
                                   loss=loss_meter.avg,
                                   acc1_meter=accuracy_meter.value()[0],
@@ -395,4 +397,4 @@ class ClassifierAgent:
                                   inter_logits_std=statistics.stdev(inter_logits),))
 
         print('\n#### VALID ACC1:\t{0:.4f}\n\n'.format(accuracy_meter.value()[0]))
-        return loss_meter.avg, accuracy_meter.value()[0], odd_accuracy_meter.value()[0], epoch_logits, epoch_metrics
+        return loss_meter.avg, accuracy_meter.value()[0], accuracy_meter.value()[0], epoch_logits, epoch_metrics
