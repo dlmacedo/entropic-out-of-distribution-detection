@@ -29,10 +29,10 @@ class IsoMaxIsometricLossSecondPart(nn.Module):
         self.entropic_scale = 10.0
 
     def forward(self, logits, targets, debug=False):
-        ############################################################################
-        """Logarithms and probabilities are calculate separately and sequentially"""
-        """Hence, nn.CrossEntropyLoss() must not be used!!!"""
-        ############################################################################
+        ###############################################################################
+        """Logarithms and probabilities are calculate separately and sequentially!!!"""
+        """Therefore, nn.CrossEntropyLoss() must not be used!!!"""
+        ###############################################################################
         probabilities_for_training = nn.Softmax(dim=1)(self.entropic_scale * logits)
         probabilities_at_targets = probabilities_for_training[range(logits.size(0)), targets]
         loss = -torch.log(probabilities_at_targets).mean()
@@ -46,8 +46,4 @@ class IsoMaxIsometricLossSecondPart(nn.Module):
             inter_intra_logits = torch.where(targets_one_hot != 0, torch.Tensor([float('Inf')]).cuda(), -logits)
             intra_logits = intra_inter_logits[intra_inter_logits != float('Inf')]
             inter_logits = inter_intra_logits[inter_intra_logits != float('Inf')]
-            #cls_probabilities = nn.Softmax(dim=1)(self.entropic_scale * logits)
-            #ood_probabilities = nn.Softmax(dim=1)(logits)
-            #max_logits = logits.max(dim=1)[0]
-            #return loss, cls_probabilities, ood_probabilities, max_logits, intra_logits, inter_logits
             return loss, intra_logits, inter_logits

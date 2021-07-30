@@ -17,7 +17,7 @@ torch.set_printoptions(edgeitems=5, precision=6, linewidth=160)
 pd.options.display.float_format = '{:,.6f}'.format
 pd.set_option('display.width', 160)
 
-parser = argparse.ArgumentParser(description='Train')
+parser = argparse.ArgumentParser(description='Main')
 parser.add_argument('-x', '--executions', default=1, type=int, metavar='N', help='Number of executions (default: 1)')
 parser.add_argument('-w', '--workers', default=4, type=int, metavar='N', help='number of data loading workers (default: 4)')
 parser.add_argument('-e', '--epochs', default=300, type=int, metavar='N', help='number of total epochs to run')

@@ -1,3 +1,5 @@
+# Measure the detection performance - Kibok Lee
+# modified by David Macedo
 from __future__ import print_function
 import numpy as np
 import numpy as np

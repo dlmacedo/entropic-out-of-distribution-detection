@@ -1,3 +1,6 @@
+# Created on Sun Oct 21 2018
+# Author: Kimin Lee
+# Modified: David Macedo
 from __future__ import print_function
 import argparse
 import torch
@@ -8,7 +11,7 @@ import data_loader
 import calculate_log as callog
 from torchvision import transforms
 
-parser = argparse.ArgumentParser(description='PyTorch code: Mahalanobis detector')
+parser = argparse.ArgumentParser(description='PyTorch code: OOD detector')
 parser.add_argument('--batch_size', type=int, default=64, metavar='N', help='batch size for data loader')
 parser.add_argument('--dataset', required=True, help='cifar10 | cifar100 | svhn')
 parser.add_argument('--dataroot', default='data', help='path to dataset')

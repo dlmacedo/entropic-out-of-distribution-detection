@@ -37,8 +37,4 @@ class SoftMaxLossSecondPart(nn.Module):
             inter_intra_logits = torch.where(targets_one_hot != 0, torch.Tensor([float('Inf')]).cuda(), logits)
             intra_logits = intra_inter_logits[intra_inter_logits != float('Inf')]
             inter_logits = inter_intra_logits[inter_intra_logits != float('Inf')]
-            #cls_probabilities = nn.Softmax(dim=1)(logits)
-            #ood_probabilities = nn.Softmax(dim=1)(logits)
-            #max_logits = logits.max(dim=1)[0]
-            #return loss, cls_probabilities, ood_probabilities, max_logits, intra_logits, inter_logits
             return loss, intra_logits, inter_logits

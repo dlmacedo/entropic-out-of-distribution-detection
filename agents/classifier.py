@@ -13,9 +13,9 @@ import utils
 class ClassifierAgent:
     def __init__(self, args):
         self.args = args
-        self.epoch = None
+        #self.epoch = None
 
-        # create dataset
+        # create loaders
         image_loaders = loaders.ImageLoader(args)
         self.trainset_loader_for_train, self.trainset_loader_for_infer, self.valset_loader = image_loaders.get_loaders()
         print("\nDATASET:", args.dataset)
@@ -39,10 +39,10 @@ class ClassifierAgent:
         self.model.cuda()
 
         # print and save model arch
-        if self.args.exp_type == "cnn_train":
-            print("\nMODEL:", self.model)
-            with open(os.path.join(self.args.experiment_path, 'model.arch'), 'w') as file:
-                print(self.model, file=file)
+        #if self.args.exp_type == "cnn_train":
+        print("\nMODEL:", self.model)
+        with open(os.path.join(self.args.experiment_path, 'model.arch'), 'w') as file:
+            print(self.model, file=file)
         print("\n$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         utils.print_num_params(self.model)
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
@@ -80,9 +80,42 @@ class ClassifierAgent:
         for self.epoch in range(1, self.args.epochs + 1):
             print("\n######## EPOCH:", self.epoch, "OF", self.args.epochs, "########")
             
+            ######################################################################################################
+            ######################################################################################################
+            if self.epoch == 1:
+                if self.args.loss.split("_")[0] == "softmax": # The IsoMax loss variants do not require warm-up!!!
+                    if self.args.model_name == 'resnet110' and self.args.dataset.startswith("cifar100"):
+                        print("Starting warm up training!!!\n" * 10)
+                        # for resnet110 original paper uses lr=0.01 for first 400 minibatches for warm-up
+                        # then switch back. In this setup it will correspond for first epoch.
+                        # Reference:
+                        # Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun
+                        # Deep Residual Learning for Image Recognition. arXiv:1512.03385
+                        for param_group in self.optimizer.param_groups:
+                            param_group['lr'] = self.args.original_learning_rate*0.1
+            ######################################################################################################
+            ######################################################################################################
+
             for param_group in self.optimizer.param_groups:
                 print("\nLEARNING RATE:\t\t", param_group["lr"])
             train_loss, train_acc1, train_odd_acc, train_epoch_logits, train_epoch_metrics = self.train_epoch()           
+
+            ######################################################################################################
+            ######################################################################################################
+            if self.epoch == 1:
+                if self.args.loss.split("_")[0] == "softmax": # The IsoMax loss variants do not require warm-up!!!
+                    if self.args.model_name == 'resnet110' and self.args.dataset.startswith("cifar100"):
+                        print("Finishing warm up training!!!\n" * 10)
+                        # for resnet110 original paper uses lr=0.01 for first 400 minibatches for warm-up
+                        # then switch back. In this setup it will correspond for first epoch.
+                        # Reference:
+                        # Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun
+                        # Deep Residual Learning for Image Recognition. arXiv:1512.03385
+                        for param_group in self.optimizer.param_groups:
+                            param_group['lr'] = self.args.original_learning_rate
+            ######################################################################################################
+            ######################################################################################################
+
             valid_loss, valid_acc1, valid_odd_acc, valid_epoch_logits, valid_epoch_metrics = self.validate_epoch()
             self.scheduler.step()
 

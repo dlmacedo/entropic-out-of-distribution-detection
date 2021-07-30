@@ -146,7 +146,7 @@ def detect(inloader, oodloader):
     return auroc.compute()
 
 total_epochs = 300
-for epoch in range(start_epoch, start_epoch + total_epochs + 1):
+for epoch in range(start_epoch, start_epoch + total_epochs):
     print()
     for param_group in optimizer.param_groups:
         print("LEARNING RATE: ", param_group["lr"])

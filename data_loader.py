@@ -1,3 +1,6 @@
+# original code is from https://github.com/aaron-xichen/pytorch-playground
+# modified by Kimin Lee
+# modified by David Macedo
 import torch
 from torchvision import datasets, transforms
 import os
@@ -83,18 +86,6 @@ def getNonTargetDataSet(data_type, batch_size, input_TF, dataroot):
         test_loader = torch.utils.data.DataLoader(testsetout, batch_size=batch_size, shuffle=False, num_workers=1)
     elif data_type == 'lsun_resize':
         dataroot = os.path.expanduser(os.path.join(dataroot, 'LSUN_resize'))
-        testsetout = datasets.ImageFolder(dataroot, transform=input_TF)
-        test_loader = torch.utils.data.DataLoader(testsetout, batch_size=batch_size, shuffle=False, num_workers=1)
-    elif data_type == 'fooling_images':
-        dataroot = os.path.expanduser(os.path.join(dataroot, 'fooling_images'))
-        testsetout = datasets.ImageFolder(dataroot, transform=transforms.Compose([transforms.Resize((32, 32)), input_TF]))
-        test_loader = torch.utils.data.DataLoader(testsetout, batch_size=batch_size, shuffle=False, num_workers=1)
-    elif data_type == 'gaussian_noise':
-        dataroot = os.path.expanduser(os.path.join(dataroot, 'gaussian_noise'))
-        testsetout = datasets.ImageFolder(dataroot, transform=input_TF)
-        test_loader = torch.utils.data.DataLoader(testsetout, batch_size=batch_size, shuffle=False, num_workers=1)
-    elif data_type == 'uniform_noise':
-        dataroot = os.path.expanduser(os.path.join(dataroot, 'uniform_noise'))
         testsetout = datasets.ImageFolder(dataroot, transform=input_TF)
         test_loader = torch.utils.data.DataLoader(testsetout, batch_size=batch_size, shuffle=False, num_workers=1)
     return test_loader
