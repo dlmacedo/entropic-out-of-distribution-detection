@@ -1,3 +1,7 @@
+# News
+
+* **07/31/2021: We added warm-up (arXiv:1512.03385) to improve the classification accuracy of the SoftMax loss training ResNet110 on CIFAR100. Please, update your local repository using "git pull" and retrain this experiment.**
+
 # Entropic Out-of-Distribution Detection
 
 <img align="center" src="assets/ood_task.png" width="750">

@@ -219,9 +219,9 @@ class ClassifierAgent:
                     "VALID", "ENTROPIES STD", valid_entropies_std))
 
             print()
-            print("TRAIN ==>>\tIADM: {0:.8f}\tIADS: {1:.8f}\tIEDM: {2:.8f}\tIEDS: {3:.8f}".format(
+            print("TRAIN ==>>\tIALM: {0:.8f}\tIALS: {1:.8f}\tIELM: {2:.8f}\tIELS: {3:.8f}".format(
                 train_intra_logits_mean, train_intra_logits_std, train_inter_logits_mean, train_inter_logits_std))
-            print("VALID ==>>\tIADM: {0:.8f}\tIADS: {1:.8f}\tIEDM: {2:.8f}\tIEDS: {3:.8f}".format(
+            print("VALID ==>>\tIALM: {0:.8f}\tIALS: {1:.8f}\tIELM: {2:.8f}\tIELS: {3:.8f}".format(
                 valid_intra_logits_mean, valid_intra_logits_std, valid_inter_logits_mean, valid_inter_logits_std))
             print()
             print("\nDATA:", self.args.dataset)
