@@ -1,4 +1,4 @@
-# Code reused from: https://github.com/akamaster/pytorch_resnet_cifar10
+# code reused from: https://github.com/akamaster/pytorch_resnet_cifar10
 '''
 Properly implemented ResNet-s for CIFAR10 as described in paper [1].
 The implementation and structure of this file is hugely influenced by [2]
@@ -22,6 +22,7 @@ Reference:
 If you use this implementation in you work, please don't forget to mention the
 author, Yerlan Idelbayev.
 '''
+
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -37,6 +38,7 @@ class LambdaLayer(nn.Module):
 
 class BasicBlock(nn.Module):
     expansion = 1
+
     def __init__(self, in_planes, planes, stride=1, option='A'):
         super(BasicBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
@@ -75,10 +77,10 @@ class ResNet(nn.Module):
         self.layer2 = self._make_layer(block, 32, num_blocks[1], stride=2)
         self.layer3 = self._make_layer(block, 64, num_blocks[2], stride=2)
 
-        ####################################################################
+        ################
         #self.linear = nn.Linear(64, num_classes)
         self.classifier = loss_first_part(64 * block.expansion, num_classes)
-        ####################################################################
+        ################
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -96,6 +98,7 @@ class ResNet(nn.Module):
         for stride in strides:
             layers.append(block(self.in_planes, planes, stride))
             self.in_planes = planes * block.expansion
+
         return nn.Sequential(*layers)
 
     def forward(self, x):
@@ -105,12 +108,51 @@ class ResNet(nn.Module):
         out = self.layer3(out)
         out = F.avg_pool2d(out, out.size()[3])
         out = out.view(out.size(0), -1)
-
-        ##########################
-        #out = self.linear(out)
         out = self.classifier(out)
-        ##########################
+        return out
 
+    def logits_features(self, x):
+        out = F.relu(self.bn1(self.conv1(x)))
+        out = self.layer1(out)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = F.avg_pool2d(out, out.size()[3])
+        features = out.view(out.size(0), -1)
+        logits = self.classifier(features)
+        return logits, features
+
+    def feature_list(self, x):
+        out_list = []
+        out = F.relu(self.bn1(self.conv1(x)))
+        out_list.append(out)
+        out = self.layer1(out)
+        out_list.append(out)
+        out = self.layer2(out)
+        out_list.append(out)
+        out = self.layer3(out)
+        out_list.append(out)
+        out = F.avg_pool2d(out, out.size()[3])
+        out_list.append(out)
+        out = out.view(out.size(0), -1)
+        out = self.classifier(out)
+        return out, out_list
+
+    def intermediate_forward(self, x, layer_index):
+        out = F.relu(self.bn1(self.conv1(x)))
+        if layer_index == 1:
+            out = self.layer1(out)
+        if layer_index == 2:
+            out = self.layer1(out)
+            out = self.layer2(out)
+        if layer_index == 3:
+            out = self.layer1(out)
+            out = self.layer2(out)
+            out = self.layer3(out)
+        if layer_index == 4:
+            out = self.layer1(out)
+            out = self.layer2(out)
+            out = self.layer3(out)
+            out = F.avg_pool2d(out, out.size()[3])
         return out
 
 

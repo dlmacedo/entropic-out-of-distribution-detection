@@ -178,10 +178,14 @@ def rand_bbox(size, lam):
     cut_w = np.int(W * cut_rat)
     cut_h = np.int(H * cut_rat)
     """
+    #print("calling randbox")
     r = 0.5 + np.random.rand(1)/2
     s = 0.5/r
     if np.random.rand(1) < 0.5:
         r, s = s, r
+    #print(r)
+    #print(s)
+    #print(r * s)
     cut_w = np.int(W * r)
     cut_h = np.int(H * s)
     """

@@ -1,4 +1,4 @@
-# Code reused from: https://github.com/kuangliu/pytorch-cifar
+# code reused from: https://github.com/kuangliu/pytorch-cifar
 import math
 import torch
 import torch.nn as nn
@@ -101,11 +101,11 @@ class DenseNet3(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.in_planes = in_planes
 
-        #########################################################
+        ################
         #self.classifier = nn.Linear(in_planes, num_classes)
         self.classifier = loss_first_part(in_planes, num_classes)
-        #########################################################
-
+        ################
+      
         # Official init from torch repo.
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -123,6 +123,64 @@ class DenseNet3(nn.Module):
         out = self.trans2(self.block2(out))
         out = self.block3(out)
         out = self.relu(self.bn1(out))
-        out = F.avg_pool2d(out, 8)
+        out = F.avg_pool2d(out, out.size()[3])
         out = out.view(-1, self.in_planes)
         return self.classifier(out)
+
+    # function to extact the multiple features
+    def feature_list(self, x):
+        out_list = []
+        out = self.conv1(x)
+        out_list.append(out)
+        out = self.trans1(self.block1(out))
+        out_list.append(out)
+        out = self.trans2(self.block2(out))
+        out_list.append(out)
+        out = self.block3(out)
+        out = self.relu(self.bn1(out))
+        out_list.append(out)
+        out = F.avg_pool2d(out, out.size()[3])
+        out = out.view(-1, self.in_planes)
+        return self.classifier(out), out_list
+
+    def intermediate_forward(self, x, layer_index):
+        out = self.conv1(x)
+        if layer_index == 0:
+            out = self.trans1(self.block1(out))
+        elif layer_index == 1:
+            out = self.trans1(self.block1(out))
+            out = self.trans2(self.block2(out))
+        elif layer_index == 2:
+            out = self.trans1(self.block1(out))
+            out = self.trans2(self.block2(out))
+            out = self.block3(out)
+            out = self.relu(self.bn1(out))
+        elif layer_index == 3:
+            out = self.trans1(self.block1(out))
+            out = self.trans2(self.block2(out))
+            out = self.block3(out)
+            out = self.relu(self.bn1(out))
+            out = F.avg_pool2d(out, out.size()[3])
+        return out
+
+    # function to extact the penultimate features
+    def penultimate_forward(self, x):
+        out = self.conv1(x)
+        out = self.trans1(self.block1(out))
+        out = self.trans2(self.block2(out))
+        out = self.block3(out)
+        penultimate = self.relu(self.bn1(out))
+        out = F.avg_pool2d(penultimate, out.size()[3])
+        out = out.view(-1, self.in_planes)
+        return self.classifier(out), penultimate
+
+    def logits_features(self, x):
+        out = self.conv1(x)
+        out = self.trans1(self.block1(out))
+        out = self.trans2(self.block2(out))
+        out = self.block3(out)
+        out = self.relu(self.bn1(out))
+        out = F.avg_pool2d(out, out.size()[3])
+        features = out.view(-1, self.in_planes)
+        logits = self.classifier(features)
+        return logits, features

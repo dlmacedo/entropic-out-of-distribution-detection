@@ -1,40 +1,54 @@
-# News
-
-* **07/31/2021: We added warm-up (arXiv:1512.03385) to improve the classification accuracy of the SoftMax loss training ResNet110 on CIFAR100. Please, update your local repository using "git pull" and retrain this experiment.**
-
 # Entropic Out-of-Distribution Detection
 
-<img align="center" src="assets/ood_task.png" width="750">
+<img align="center" src="assets/task.png" width="750">
 
->>**We call our approach seamless because it neither presents special requirements (e.g., hyperparameter tuning, additional data) nor produces side effects (e.g., inefficient inference or out-of-distribution detection, classification accuracy drop). Our approach consists of a loss that works as a drop-in replacement to the SoftMax loss (i.e., the combination of the output linear layer, the SoftMax activation, and the cross-entropy loss). The out-of-distribution detection is performed using a zero computational cost score.**
+>>**We call our approach seamless because it neither presents special requirements (e.g., hyperparameter tuning, additional data) nor produces side effects (e.g., inefficient inference or out-of-distribution detection, classification accuracy drop).**
 
-<img align="center" src="assets/ood_approaches_compared.PNG" width="750">
+>>**Our approach consists of a loss that works as a drop-in replacement to the SoftMax loss (i.e., the combination of the output linear layer, the SoftMax activation, and the cross-entropy loss). The out-of-distribution detection is performed using a zero computational cost score.**
 
-# Papers
+ >>**Besides all the above, the IsoMax+ loss (the most recent version) produces state-of-the-art out-of-distribution detection performance.**
 
-## Entropic Out-of-Distribution Detection (IJCNN 2021)
+<img align="center" src="assets/presentation.png" width="750">
 
-The paper "[Entropic Out-of-Distribution Detection](https://arxiv.org/abs/1908.05569)" (IJCNN 2021) proposes the IsoMax loss, which works as a drop-in replacement of the SoftMax loss. The solution is seamless. Hence, it does not produce classification accuracy drop while significantly improves the OOD detection performance. Additionally, unlike other OOD detection approaches, IsoMax loss delivers inferences as fast and energy-efficient as SoftMax loss-trained neural networks. Our solution does not require hyperparameter tuning. No additional data are needed. Finally, the out-of-distribution detection is performed using the speedy entropic score. 
+___
 
-<img align="center" src="assets/isomax_table2.png" width="750">
+# Add seamless and state-of-the-art performance out-of-distribution detection to your project!!!
 
-<img align="center" src="assets/isomax_table4.png" width="750">
+## Replace the SoftMax loss with the IsoMax+ loss changing two lines of code.
 
-<img align="center" src="assets/isomax_figure1.png" width="750">
+### Replace the model classifier last layer with the IsoMax+ loss first part:
 
-## Improving Entropic Out-of-Distribution Detection using Isometric Distances and the Minimum Distance Score (preprint)
+```python
+class Model(nn.Module):
+    def __init__(self):
+    (...)
+    #self.classifier = nn.Linear(num_features, num_classes)
+    self.classifier = losses.IsoMaxPlusLossFirstPart(num_features, num_classes)
+```
 
-The paper "[Improving Entropic Out-of-Distribution Detection using Isometric Distances and the Minimum Distance Score](https://arxiv.org/abs/2105.14399)" proposes the Isometric IsoMax loss that significantly improved the out-of-distribution detection performance relative to IsoMax loss while also keeping the solution seamless. Besides enhanced results, the Isometric IsoMax loss also works as a SoftMax loss drop-in replacement. The minimum distance score is used rather than the entropic score.
+### Replace the criterion by the IsoMax+ loss second part:
 
->>**From now on, please use the Isometric IsoMax loss combined with the minimum distance score rather than the IsoMax loss combined with the entropic score.**
+```python
+model = Model()
+#criterion = nn.CrossEntropyLoss()
+criterion = losses.IsoMaxPlusLossSecondPart(model.classifier)
+```
 
-<img align="center" src="assets/isometric_table3.PNG" width="750">
+## Detect using the minimum distance score:
 
-<img align="center" src="assets/isometric_table4.PNG" width="750">
+```python
+outputs = model(inputs)
+# outputs are equal to logits, which in turn are equivalent to negative distances
+score = outputs.max(dim=1)[0] # this is the minimum distance score for detection
+# the minimum distance score is the best option for the IsoMax+ loss
+```
 
-<img align="center" src="assets/isometric_table5.PNG" width="750">
+## Run the example:
 
-<img align="center" src="assets/isometric_figure1.PNG" width="750">
+```
+python example.py
+```
+___
 
 # Code
 
@@ -83,61 +97,65 @@ tar xvf LSUN_resize.tar.gz
 ./analize.sh ood
 ```
 
-___
+# Papers
 
-# Add out-of-distribution detection to your project!!!
+## Entropic Out-of-Distribution Detection (IJCNN 2021)
 
-## Replace the SoftMax loss with the IsoMax loss changing two lines of code.
+The paper "Entropic Out-of-Distribution Detection" [(arXiv)](https://arxiv.org/abs/1908.05569) [(IJCNN 2021)](https://ieeexplore.ieee.org/document/9533899) proposes the IsoMax loss, which works as a drop-in replacement of the SoftMax loss. The solution is seamless. Hence, it does not produce classification accuracy drop while significantly improves the OOD detection performance. Additionally, unlike other OOD detection approaches, IsoMax loss delivers inferences as fast and energy-efficient as SoftMax loss-trained neural networks. Our solution does not require hyperparameter tuning. No additional data are needed. Finally, the out-of-distribution detection is performed using the speedy entropic score. 
 
-### Replace the model classifier last layer with the Isometric IsoMax loss first part:
+<img align="center" src="assets/paper1_figure1.png" width="750">
 
-```python
-class Model(nn.Module):
-    def __init__(self):
-    (...)
-    #self.classifier = nn.Linear(num_features, num_classes)
-    self.classifier = losses.IsoMaxIsometricLossFirstPart(num_features, num_classes)
-```
+## Entropic Out-of-Distribution Detection: Seamless Detection of Unknown Examples (IEEE TNNLS 2021)
 
-### Replace the criterion by the Isometric IsoMax loss second part:
+The paper "Entropic Out-of-Distribution Detection: Seamless Detection of Unknown Examples" [(arXiv)](https://arxiv.org/abs/2006.04005) [(IEEE TNNLS 2021)](https://ieeexplore.ieee.org/document/9556483) is the journal version of the paper "Entropic Out-of-Distribution Detection". It presents additional explanations, experiments, and analyses regarding the IsoMax loss. 
 
-```python
-model = Model()
-#criterion = nn.CrossEntropyLoss()
-criterion = losses.IsoMaxIsometricLossSecondPart(model.classifier)
-```
+<img align="center" src="assets/paper2_figure1.png" width="750">
 
-## Detect using the minimum distance score:
+## A Seamless and High-Performance Out-of-Distribution Detection Approach Simply Replacing the SoftMax Loss
 
-```python
-outputs = model(inputs)
-# outputs are equal to logits, which in turn are equivalent to negative distances
-score = outputs.max(dim=1)[0] # this is the minimum distance score
-# the minimum distance score is the best option for the Isometric IsoMax loss
-```
+The paper "A Seamless and High-Performance Out-of-Distribution Detection Approach Simply Replacing the SoftMax Loss" [(arXiv)](https://arxiv.org/abs/2105.14399) proposes the Enhanced IsoMax (IsoMax+) loss that significantly improved the out-of-distribution detection performance relative to IsoMax loss while also keeping the solution seamless. The minimum distance score is used rather than the entropic score. Besides being seamless and easy to implement and use, this solution produces competitive state-of-the-art out-of-distribution detection results.
 
-## Run the example:
+>>**From now on, use the IsoMax+ loss combined with the minimum distance score rather than the IsoMax loss combined with the entropic score.**
 
-```
-python example.py
-```
+<img align="center" src="assets/paper3_figure1.png" width="750">
+
+<img align="center" src="assets/paper3_figure2.png" width="750">
+
+<img align="center" src="assets/paper3_figure3.png" width="750">
+
+<img align="center" src="assets/paper3_figure4.png" width="750">
 
 # Citation
 
-Please cite our papers if you use our losses in your works:
+Please, cite our papers if you use our losses in your works:
 
 ```bibtex
-@inproceedings{macêdo2021entropic,
-      title={Entropic Out-of-Distribution Detection}, 
-      author={David Macêdo and Tsang Ing Ren and Cleber Zanchettin and Adriano Oliveira and Teresa Ludermir},
-      booktitle={International Joint Conference on Neural Networks (IJCNN)},
-      year={2021},
-}
+@INPROCEEDINGS{9533899,
+  author={Macêdo, David and Ren, Tsang Ing and Zanchettin, Cleber and Oliveira, Adriano L. I. and Ludermir, Teresa},
+  booktitle={2021 International Joint Conference on Neural Networks (IJCNN)}, 
+  title={Entropic Out-of-Distribution Detection}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={1-8},
+  doi={10.1109/IJCNN52387.2021.9533899}}
 ```
 
-```bibtext
-@article{macêdo2021improving,
-      title={Improving Entropic Out-of-Distribution Detection using Isometric Distances and the Minimum Distance Score}, 
+```bibtex
+@ARTICLE{9556483,
+  author={Macêdo, David and Ren, Tsang Ing and Zanchettin, Cleber and Oliveira, Adriano L. I. and Ludermir, Teresa},
+  journal={IEEE Transactions on Neural Networks and Learning Systems}, 
+  title={Entropic Out-of-Distribution Detection: Seamless Detection of Unknown Examples}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={1-15},
+  doi={10.1109/TNNLS.2021.3112897}}
+```
+
+```bibtex
+@misc{macêdo2021seamless,
+      title={A Seamless and High-Performance Out-of-Distribution Detection Approach Simply Replacing the SoftMax Loss}, 
       author={David Macêdo and Teresa Ludermir},
       year={2021},
       eprint={2105.14399},

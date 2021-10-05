@@ -10,12 +10,14 @@ import tools
 from torchmetrics import AUROC
 import random
 import numpy
+import torchnet as tnt
 
-seed = 42
-random.seed(seed)
-numpy.random.seed(seed)
-torch.manual_seed(seed)
-torch.cuda.manual_seed(seed)
+
+base_seed = 42
+random.seed(base_seed)
+numpy.random.seed(base_seed)
+torch.manual_seed(base_seed)
+torch.cuda.manual_seed(base_seed)
 cudnn.benchmark = False
 cudnn.deterministic = True
 
@@ -37,10 +39,12 @@ transform_test = transforms.Compose([
 trainset = torchvision.datasets.CIFAR10(root='data/cifar10', train=True, download=True, transform=transform_train)
 trainloader = torch.utils.data.DataLoader(
     trainset, batch_size=64, shuffle=True, num_workers=4,
-    worker_init_fn=lambda worker_id: random.seed(seed + worker_id))
+    worker_init_fn=lambda worker_id: random.seed(base_seed + worker_id),
+    )
 testset = torchvision.datasets.CIFAR10(root='data/cifar10', train=False, download=True, transform=transform_test)
 testloader = torch.utils.data.DataLoader(
-    testset, batch_size=64, shuffle=False, num_workers=4)
+    testset, batch_size=64, shuffle=False, num_workers=4,
+    )
 
 # Model
 print('==> Building model...')
@@ -49,7 +53,7 @@ model = model.to(device)
 
 ##################################################################
 #criterion = nn.CrossEntropyLoss()
-criterion = losses.IsoMaxIsometricLossSecondPart(model.classifier)
+criterion = losses.IsoMaxPlusLossSecondPart(model.classifier)
 ##################################################################
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, nesterov=True, weight_decay=1*1e-4)
@@ -90,7 +94,6 @@ def test(epoch):
             inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
             loss = criterion(outputs, targets)
-
             test_loss += loss.item()
             _, predicted = outputs.max(1)
             total += targets.size(0)
@@ -115,6 +118,7 @@ def test(epoch):
 
 def detect(inloader, oodloader):
     auroc = AUROC(pos_label=1)
+    auroctnt = tnt.meter.AUCMeter()
     model.eval()
     with torch.no_grad():
         for _, (inputs, targets) in enumerate(inloader):
@@ -128,8 +132,9 @@ def detect(inloader, oodloader):
             # the negative entropy score is the best option for the IsoMax loss
             # outputs are equal to logits, which in turn are equivalent to negative distances
             score = outputs.max(dim=1)[0] # this is the minimum distance score
-            # the minimum distance score is the best option for the Isometric IsoMax loss
-            auroc.update(score, targets)            
+            # the minimum distance score is the best option for the IsoMax+ loss
+            auroc.update(score, targets) 
+            auroctnt.add(score, targets)           
         for _, (inputs, targets) in enumerate(oodloader):
             inputs, targets = inputs.to(device), targets.to(device)
             targets.fill_(0)
@@ -140,10 +145,11 @@ def detect(inloader, oodloader):
             #score = -entropies # this is the negative entropy score
             # the negative entropy score is the best option for the IsoMax loss
             # outputs are equal to logits, which in turn are equivalent to negative distances
-            score = outputs.max(dim=1)[0] # this is the minimum distance score
-            # the minimum distance score is the best option for the Isometric IsoMax loss
+            score = outputs.max(dim=1)[0] # this is the minimum distance score for detection
+            # the minimum distance score is the best option for the IsoMax+ loss
             auroc.update(score, targets)            
-    return auroc.compute()
+            auroctnt.add(score, targets)            
+    return auroc.compute(), auroctnt.value()[0]
 
 total_epochs = 300
 for epoch in range(start_epoch, start_epoch + total_epochs):
@@ -157,6 +163,7 @@ for epoch in range(start_epoch, start_epoch + total_epochs):
 checkpoint = torch.load('checkpoint/ckpt.pth')
 model.load_state_dict(checkpoint['model'])
 test_acc = checkpoint['acc']
+
 print()
 print("###################################################")
 print("Test Accuracy (%): {0:.4f}".format(test_acc))
@@ -166,28 +173,28 @@ print()
 dataroot = os.path.expanduser(os.path.join('data', 'Imagenet_resize'))
 oodset = torchvision.datasets.ImageFolder(dataroot, transform=transform_test)
 oodloader = torch.utils.data.DataLoader(oodset, batch_size=64, shuffle=False, num_workers=4)
-auroc = detect(testloader, oodloader).item()
+auroc = detect(testloader, oodloader)
 print()
 print("#################################################################################################################")
-print("Detection performance for ImageNet Resize as Out-of-Distribution [AUROC] (%): {0:.4f}".format(100. * auroc))
+print("Detection performance for ImageNet Resize as Out-of-Distribution [AUROC] (%): {0:.4f}".format(100. * auroc[0].item()), auroc[1])
 print("#################################################################################################################")
 print()
 
 dataroot = os.path.expanduser(os.path.join('data', 'LSUN_resize'))
 oodset = torchvision.datasets.ImageFolder(dataroot, transform=transform_test)
 oodloader = torch.utils.data.DataLoader(oodset, batch_size=64, shuffle=False, num_workers=4)
-auroc = detect(testloader, oodloader).item()
+auroc = detect(testloader, oodloader)
 print()
 print("#################################################################################################################")
-print("Detection performance for LSUN Resize as Out-of-Distribution [AUROC] (%): {0:.4f}".format(100. * auroc))
+print("Detection performance for LSUN Resize as Out-of-Distribution [AUROC] (%): {0:.4f}".format(100. * auroc[0].item()), auroc[1])
 print("#################################################################################################################")
 print()
 
 oodset = torchvision.datasets.SVHN(root='data/svhn', split="test", download=True, transform=transform_test)
 oodloader = torch.utils.data.DataLoader(oodset, batch_size=64, shuffle=False, num_workers=4)
-auroc = detect(testloader, oodloader).item()
+auroc = detect(testloader, oodloader)
 print()
 print("#################################################################################################################")
-print("Detection performance for SVHN as Out-of-Distribution [AUROC] (%): {0:.4f}".format(100. * auroc))
+print("Detection performance for SVHN as Out-of-Distribution [AUROC] (%): {0:.4f}".format(100. * auroc[0].item()), auroc[1])
 print("#################################################################################################################")
 print()

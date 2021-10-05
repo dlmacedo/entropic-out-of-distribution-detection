@@ -33,20 +33,28 @@ parser.add_argument('-gpu', '--gpu-id', default='0', type=int, help='id for CUDA
 parser.add_argument('-ei', '--exps-inputs', default="", type=str, metavar='PATHS', help='Inputs paths for the experiments')
 parser.add_argument('-et', '--exps-types', default="", type=str, metavar='EXPERIMENTS', help='Experiments types to be performed')
 parser.add_argument('-ec', '--exps-configs', default="", type=str, metavar='CONFIGS', help='Experiments configs to be used')
+parser.add_argument('-sd', '--seed', default=42, type=int, metavar='N', help='Seed (default: 42)')
 
 args = parser.parse_args()
-
-args.seed = 42
-random.seed(args.seed)
-numpy.random.seed(args.seed)
-torch.manual_seed(args.seed)
-torch.cuda.manual_seed(args.seed)
-cudnn.benchmark = False
 
 args.exps_inputs = args.exps_inputs.split(":")
 args.exps_types = args.exps_types.split(":")
 args.exps_configs = args.exps_configs.split(":")
-args.learning_rate_decay_epochs = sorted([int(item) for item in args.learning_rate_decay_epochs.split()])
+args.learning_rate_decay_epochs = [int(item) for item in args.learning_rate_decay_epochs.split()]
+
+random.seed(args.seed)
+numpy.random.seed(args.seed)
+torch.manual_seed(args.seed)
+torch.cuda.manual_seed(args.seed)
+print("seed", args.seed)
+
+cudnn.benchmark = False
+if args.executions == 1:
+    cudnn.deterministic = True
+    print("Deterministic!!!")
+else:
+    cudnn.deterministic = False
+    print("No deterministic!!!")
 
 torch.cuda.set_device(args.gpu_id)
 print('\n__Python VERSION:', sys.version)
@@ -73,10 +81,11 @@ def main():
                 print("EXPERIMENT CONFIG:", args.exp_config)
 
                 args.experiment_path = os.path.join("experiments", args.exp_input, args.exp_type, args.exp_config)
+
                 if not os.path.exists(args.experiment_path):
                     os.makedirs(args.experiment_path)
                 print("EXPERIMENT PATH:", args.experiment_path)
-                
+
                 args.executions_best_results_file_path = os.path.join(args.experiment_path, "results_best.csv")
                 args.executions_raw_results_file_path = os.path.join(args.experiment_path, "results_raw.csv")
 
@@ -110,6 +119,7 @@ def main():
 
                     cnn_agent = agents.ClassifierAgent(args)
                     cnn_agent.train_classify()
+
 
                 experiment_results = pd.read_csv(os.path.join(os.path.join(args.experiment_path, "results_best.csv")))
                 print("\n################################\n", "EXPERIMENT RESULTS", "\n################################")

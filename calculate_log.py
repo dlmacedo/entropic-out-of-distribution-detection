@@ -1,5 +1,3 @@
-# Measure the detection performance - Kibok Lee
-# modified by David Macedo
 from __future__ import print_function
 import numpy as np
 import numpy as np
@@ -13,6 +11,8 @@ def get_curve(dir_name, stypes=['Baseline', 'Gaussian_LDA']):
         novel = np.loadtxt('{}/confidence_{}_Out.txt'.format(dir_name, stype), delimiter='\n')
         known.sort()
         novel.sort()
+        #end = np.max([np.max(known), np.max(novel)])
+        #start = np.min([np.min(known),np.min(novel)])
         num_k = known.shape[0]
         num_n = novel.shape[0]
         tp[stype] = -np.ones([num_k+num_n+1], dtype=int)

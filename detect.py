@@ -1,6 +1,3 @@
-# Created on Sun Oct 21 2018
-# Author: Kimin Lee
-# Modified: David Macedo
 from __future__ import print_function
 import argparse
 import torch
@@ -77,8 +74,8 @@ def main():
         elif args.loss.split("_")[0] == "isomax":
             loss_first_part = losses.IsoMaxLossFirstPart
             scores = ["ES"]
-        elif args.loss.split("_")[0] == "isomaxisometric":
-            loss_first_part = losses.IsoMaxIsometricLossFirstPart
+        elif args.loss.split("_")[0] == "isomaxplus":
+            loss_first_part = losses.IsoMaxPlusLossFirstPart
             scores = ["MDS"]
 
         # load networks
@@ -165,6 +162,7 @@ def get_scores(model, test_loader, outf, out_flag, score_type=None):
                 soft_out = logits.max(dim=1)[0]
         for i in range(data.size(0)):
             f.write("{}\n".format(soft_out[i]))
+
     f.close()
     g.close()
 

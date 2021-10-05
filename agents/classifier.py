@@ -1,4 +1,5 @@
 import os
+import sys
 import torch
 import models
 import loaders
@@ -13,11 +14,11 @@ import utils
 class ClassifierAgent:
     def __init__(self, args):
         self.args = args
-        #self.epoch = None
+        self.epoch = None
 
-        # create loaders
+        # create dataset
         image_loaders = loaders.ImageLoader(args)
-        self.trainset_loader_for_train, self.trainset_loader_for_infer, self.valset_loader = image_loaders.get_loaders()
+        self.trainset_loader_for_train, self.trainset_loader_for_infer, self.valset_loader, self.outlier_loader = image_loaders.get_loaders()
         print("\nDATASET:", args.dataset)
 
         if self.args.loss.split("_")[0] == "softmax":
@@ -26,9 +27,11 @@ class ClassifierAgent:
         elif self.args.loss.split("_")[0] == "isomax":
             loss_first_part = losses.IsoMaxLossFirstPart
             loss_second_part = losses.IsoMaxLossSecondPart
-        elif self.args.loss.split("_")[0] == "isomaxisometric":
-            loss_first_part = losses.IsoMaxIsometricLossFirstPart
-            loss_second_part = losses.IsoMaxIsometricLossSecondPart
+        elif self.args.loss.split("_")[0] == "isomaxplus":
+            loss_first_part = losses.IsoMaxPlusLossFirstPart
+            loss_second_part = losses.IsoMaxPlusLossSecondPart
+        else:
+            sys.exit('You should pass a valid loss to use!!!')
 
         # create model
         print("=> creating model '{}'".format(self.args.model_name))
@@ -39,7 +42,6 @@ class ClassifierAgent:
         self.model.cuda()
 
         # print and save model arch
-        #if self.args.exp_type == "cnn_train":
         print("\nMODEL:", self.model)
         with open(os.path.join(self.args.experiment_path, 'model.arch'), 'w') as file:
             print(self.model, file=file)
@@ -48,7 +50,7 @@ class ClassifierAgent:
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
 
         # create loss
-        self.criterion = loss_second_part(self.model.classifier)    
+        self.criterion = loss_second_part(self.model.classifier)   
 
         parameters = self.model.parameters()
         self.optimizer = torch.optim.SGD(
@@ -65,10 +67,10 @@ class ClassifierAgent:
         if self.args.execution == 1:
             with open(self.args.executions_best_results_file_path, "w") as best_results:
                 best_results.write(
-                    "DATA,MODEL,LOSS,EXECUTION,EPOCH,TRAIN LOSS,TRAIN ACC1,TRAIN ODD_ACC,"
+                    "DATA,MODEL,LOSS,EXECUTION,EPOCH,TRAIN LOSS,TRAIN ACC1,TRAIN SCALE,"
                     "TRAIN INTRA_LOGITS MEAN,TRAIN INTRA_LOGITS STD,TRAIN INTER_LOGITS MEAN,TRAIN INTER_LOGITS STD,"
                     "TRAIN MAX_PROBS MEAN,TRAIN MAX_PROBS STD,TRAIN ENTROPIES MEAN,TRAIN ENTROPIES STD,"
-                    "VALID LOSS,VALID ACC1,VALID ODD_ACC,"
+                    "VALID LOSS,VALID ACC1,VALID SCALE,"
                     "VALID INTRA_LOGITS MEAN,VALID INTRA_LOGITS STD,VALID INTER_LOGITS MEAN,VALID INTER_LOGITS STD,"
                     "VALID MAX_PROBS MEAN,VALID MAX_PROBS STD,VALID ENTROPIES MEAN,VALID ENTROPIES STD\n")
             with open(self.args.executions_raw_results_file_path, "w") as raw_results:
@@ -79,7 +81,7 @@ class ClassifierAgent:
 
         for self.epoch in range(1, self.args.epochs + 1):
             print("\n######## EPOCH:", self.epoch, "OF", self.args.epochs, "########")
-            
+
             ######################################################################################################
             ######################################################################################################
             if self.epoch == 1:
@@ -97,8 +99,8 @@ class ClassifierAgent:
             ######################################################################################################
 
             for param_group in self.optimizer.param_groups:
-                print("\nLEARNING RATE:\t\t", param_group["lr"])
-            train_loss, train_acc1, train_odd_acc, train_epoch_logits, train_epoch_metrics = self.train_epoch()           
+                print("\nLEARNING RATE:\t\t", param_group["lr"])                
+            train_loss, train_acc1, train_scale, train_epoch_logits, train_epoch_metrics = self.train_epoch()           
 
             ######################################################################################################
             ######################################################################################################
@@ -116,7 +118,7 @@ class ClassifierAgent:
             ######################################################################################################
             ######################################################################################################
 
-            valid_loss, valid_acc1, valid_odd_acc, valid_epoch_logits, valid_epoch_metrics = self.validate_epoch()
+            valid_loss, valid_acc1, valid_scale, valid_epoch_logits, valid_epoch_metrics = self.validate_epoch()
             self.scheduler.step()
 
             train_intra_logits_mean = statistics.mean(train_epoch_logits["intra"])
@@ -125,16 +127,16 @@ class ClassifierAgent:
             train_inter_logits_std = statistics.pstdev(train_epoch_logits["inter"])
             train_max_probs_mean = statistics.mean(train_epoch_metrics["max_probs"])
             train_max_probs_std = statistics.pstdev(train_epoch_metrics["max_probs"])
-            train_entropies_mean = statistics.mean(train_epoch_metrics["entropies"])/math.log(self.args.number_of_model_classes)
-            train_entropies_std = statistics.pstdev(train_epoch_metrics["entropies"])/math.log(self.args.number_of_model_classes)
+            train_entropies_mean = statistics.mean(train_epoch_metrics["entropies"])
+            train_entropies_std = statistics.pstdev(train_epoch_metrics["entropies"])
             valid_intra_logits_mean = statistics.mean(valid_epoch_logits["intra"])
             valid_intra_logits_std = statistics.pstdev(valid_epoch_logits["intra"])
             valid_inter_logits_mean = statistics.mean(valid_epoch_logits["inter"])
             valid_inter_logits_std = statistics.pstdev(valid_epoch_logits["inter"])
             valid_max_probs_mean = statistics.mean(valid_epoch_metrics["max_probs"])
             valid_max_probs_std = statistics.pstdev(valid_epoch_metrics["max_probs"])
-            valid_entropies_mean = statistics.mean(valid_epoch_metrics["entropies"])/math.log(self.args.number_of_model_classes)
-            valid_entropies_std = statistics.pstdev(valid_epoch_metrics["entropies"])/math.log(self.args.number_of_model_classes)
+            valid_entropies_mean = statistics.mean(valid_epoch_metrics["entropies"])
+            valid_entropies_std = statistics.pstdev(valid_epoch_metrics["entropies"])
 
             print("\n####################################################")
             print("TRAIN MAX PROB MEAN:\t", train_max_probs_mean)
@@ -159,7 +161,7 @@ class ClassifierAgent:
                     "TRAIN", "ACC1", train_acc1))
                 raw_results.write("{},{},{},{},{},{},{},{}\n".format(
                     self.args.dataset, self.args.model_name, self.args.loss, self.args.execution, self.epoch,
-                    "TRAIN", "ODD_ACC", train_odd_acc))
+                    "TRAIN", "SCALE", train_scale))
                 raw_results.write("{},{},{},{},{},{},{},{}\n".format(
                     self.args.dataset, self.args.model_name, self.args.loss, self.args.execution, self.epoch,
                     "TRAIN", "INTRA_LOGITS MEAN", train_intra_logits_mean))
@@ -192,7 +194,7 @@ class ClassifierAgent:
                     "VALID", "ACC1", valid_acc1))
                 raw_results.write("{},{},{},{},{},{},{},{}\n".format(
                     self.args.dataset, self.args.model_name, self.args.loss, self.args.execution, self.epoch,
-                    "VALID", "ODD_ACC", valid_odd_acc))
+                    "VALID", "SCALE", valid_scale))
                 raw_results.write("{},{},{},{},{},{},{},{}\n".format(
                     self.args.dataset, self.args.model_name, self.args.loss, self.args.execution, self.epoch,
                     "VALID", "INTRA_LOGITS MEAN", valid_intra_logits_mean))
@@ -239,7 +241,7 @@ class ClassifierAgent:
                     "EPOCH": self.epoch,
                     "TRAIN LOSS": train_loss,
                     "TRAIN ACC1": train_acc1,
-                    "TRAIN ODD_ACC": train_odd_acc,
+                    "TRAIN SCALE": train_scale,
                     "TRAIN INTRA_LOGITS MEAN": train_intra_logits_mean,
                     "TRAIN INTRA_LOGITS STD": train_intra_logits_std,
                     "TRAIN INTER_LOGITS MEAN": train_inter_logits_mean,
@@ -250,7 +252,7 @@ class ClassifierAgent:
                     "TRAIN ENTROPIES STD": train_entropies_std,
                     "VALID LOSS": valid_loss,
                     "VALID ACC1": valid_acc1,
-                    "VALID ODD_ACC": valid_odd_acc,
+                    "VALID SCALE": valid_scale,
                     "VALID INTRA_LOGITS MEAN": valid_intra_logits_mean,
                     "VALID INTRA_LOGITS STD": valid_intra_logits_std,
                     "VALID INTER_LOGITS MEAN": valid_inter_logits_mean,
@@ -284,7 +286,7 @@ class ClassifierAgent:
                 best_model_results["EPOCH"],
                 best_model_results["TRAIN LOSS"],
                 best_model_results["TRAIN ACC1"],
-                best_model_results["TRAIN ODD_ACC"],
+                best_model_results["TRAIN SCALE"],
                 best_model_results["TRAIN INTRA_LOGITS MEAN"],
                 best_model_results["TRAIN INTRA_LOGITS STD"],
                 best_model_results["TRAIN INTER_LOGITS MEAN"],
@@ -295,7 +297,7 @@ class ClassifierAgent:
                 best_model_results["TRAIN ENTROPIES STD"],
                 best_model_results["VALID LOSS"],
                 best_model_results["VALID ACC1"],
-                best_model_results["VALID ODD_ACC"],
+                best_model_results["VALID SCALE"],
                 best_model_results["VALID INTRA_LOGITS MEAN"],
                 best_model_results["VALID INTRA_LOGITS STD"],
                 best_model_results["VALID INTER_LOGITS MEAN"],
@@ -325,7 +327,7 @@ class ClassifierAgent:
             targets = in_data[1].cuda(non_blocking=True)
 
             outputs = self.model(inputs)           
-            loss, intra_logits, inter_logits = self.criterion(outputs, targets, debug=True)
+            loss, scale, intra_logits, inter_logits = self.criterion(outputs, targets, debug=True)
 
             max_logits = outputs.max(dim=1)[0]
             probabilities = torch.nn.Softmax(dim=1)(outputs)
@@ -345,7 +347,7 @@ class ClassifierAgent:
                 epoch_logits["inter"] += inter_logits
             epoch_metrics["max_probs"] += max_probs.tolist()
             epoch_metrics["max_logits"] += max_logits.tolist()
-            epoch_metrics["entropies"] += entropies.tolist()
+            epoch_metrics["entropies"] += (entropies/math.log(self.args.number_of_model_classes)).tolist() # normalized entropy!!!
 
             # zero grads, compute gradients and do optimizer step
             self.optimizer.zero_grad()
@@ -369,7 +371,7 @@ class ClassifierAgent:
                               inter_logits_std=statistics.stdev(inter_logits),))
 
         print('\n#### TRAIN ACC1:\t{0:.4f}\n\n'.format(accuracy_meter.value()[0]))
-        return loss_meter.avg, accuracy_meter.value()[0], accuracy_meter.value()[0], epoch_logits, epoch_metrics
+        return loss_meter.avg, accuracy_meter.value()[0], scale, epoch_logits, epoch_metrics
 
     def validate_epoch(self):
         print()
@@ -391,14 +393,14 @@ class ClassifierAgent:
                 targets = in_data[1].cuda(non_blocking=True)
 
                 outputs = self.model(inputs)
-                loss, intra_logits, inter_logits = self.criterion(outputs, targets, debug=True)
+                loss, scale, intra_logits, inter_logits = self.criterion(outputs, targets, debug=True)
 
                 max_logits = outputs.max(dim=1)[0]
                 probabilities = torch.nn.Softmax(dim=1)(outputs)
                 max_probs = probabilities.max(dim=1)[0]
                 entropies = utils.entropies_from_probabilities(probabilities)
 
-                loss_meter.add(loss.item(), targets.size(0))
+                loss_meter.add(loss.item(), inputs.size(0))
                 accuracy_meter.add(outputs.detach(), targets.detach())
 
                 intra_logits = intra_logits.tolist()
@@ -411,7 +413,7 @@ class ClassifierAgent:
                     epoch_logits["inter"] += inter_logits
                 epoch_metrics["max_probs"] += max_probs.tolist()
                 epoch_metrics["max_logits"] += max_logits.tolist()
-                epoch_metrics["entropies"] += entropies.tolist()
+                epoch_metrics["entropies"] += (entropies/math.log(self.args.number_of_model_classes)).tolist() # normalized entropy!!!
 
                 if batch_index % self.args.print_freq == 0:
                     print('Valid Epoch: [{0}][{1:3}/{2}]\t'
@@ -430,4 +432,5 @@ class ClassifierAgent:
                                   inter_logits_std=statistics.stdev(inter_logits),))
 
         print('\n#### VALID ACC1:\t{0:.4f}\n\n'.format(accuracy_meter.value()[0]))
-        return loss_meter.avg, accuracy_meter.value()[0], accuracy_meter.value()[0], epoch_logits, epoch_metrics
+        return loss_meter.avg, accuracy_meter.value()[0], scale, epoch_logits, epoch_metrics
+

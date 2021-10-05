@@ -1,12 +1,9 @@
-# original code is from https://github.com/aaron-xichen/pytorch-playground
-# modified by Kimin Lee
-# modified by David Macedo
 import torch
 from torchvision import datasets, transforms
 import os
 
 
-def getSVHN(batch_size, TF, data_root='/tmp/public_dataset/pytorch', train=True, val=True, **kwargs):
+def getSVHN(batch_size, TF, data_root='data', train=True, val=True, **kwargs):
     data_root = os.path.expanduser(os.path.join(data_root, 'svhn'))
     kwargs.pop('input_size', None)
 
@@ -25,7 +22,7 @@ def getSVHN(batch_size, TF, data_root='/tmp/public_dataset/pytorch', train=True,
     return ds
 
 
-def getCIFAR10(batch_size, TF, data_root='/tmp/public_dataset/pytorch', train=True, val=True, **kwargs):
+def getCIFAR10(batch_size, TF, data_root='data', train=True, val=True, **kwargs):
     data_root = os.path.expanduser(os.path.join(data_root, 'cifar10'))
     kwargs.pop('input_size', None)
 
@@ -44,7 +41,7 @@ def getCIFAR10(batch_size, TF, data_root='/tmp/public_dataset/pytorch', train=Tr
     return ds
 
 
-def getCIFAR100(batch_size, TF, data_root='/tmp/public_dataset/pytorch', TTF=None, train=True, val=True, **kwargs):
+def getCIFAR100(batch_size, TF, data_root='data', TTF=None, train=True, val=True, **kwargs):
     data_root = os.path.expanduser(os.path.join(data_root, 'cifar100'))
     kwargs.pop('input_size', None)
 

@@ -4,6 +4,7 @@ checkpoint/
 temporary/
 data/
 old/
+*.gz
 *.pth
 *.tar
 *.zip

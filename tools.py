@@ -9,6 +9,7 @@ import os
 import sys
 import time
 
+
 _, term_width = os.popen('stty size', 'r').read().split()
 term_width = int(term_width)
 

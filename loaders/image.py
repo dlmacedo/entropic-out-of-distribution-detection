@@ -2,7 +2,6 @@ import random
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-import random
 
 
 class ImageLoader:
@@ -27,7 +26,8 @@ class ImageLoader:
                 root=self.dataset_path, train=True, download=True, transform=self.inference_transform)
             self.val_set = torchvision.datasets.CIFAR10(
                 root=self.dataset_path, train=False, download=True, transform=self.inference_transform)
-          
+            self.outlier_data = None
+
         elif args.dataset == "cifar100":
             self.normalize = transforms.Normalize((0.507, 0.486, 0.440), (0.267, 0.256, 0.276))
             self.train_transform = transforms.Compose([
@@ -45,6 +45,7 @@ class ImageLoader:
                 root=self.dataset_path, train=True, download=True, transform=self.inference_transform)
             self.val_set = torchvision.datasets.CIFAR100(
                 root=self.dataset_path, train=False, download=True, transform=self.inference_transform)
+            self.outlier_data = None
 
         elif args.dataset == "svhn":
             self.normalize = transforms.Normalize((0.437, 0.443, 0.472), (0.198, 0.201, 0.197))
@@ -63,13 +64,23 @@ class ImageLoader:
                 root=self.dataset_path, split="train", download=True, transform=self.inference_transform)
             self.val_set = torchvision.datasets.SVHN(
                 root=self.dataset_path, split="test", download=True, transform=self.inference_transform)
+            self.outlier_data = None
+
 
     def get_loaders(self):
         trainset_loader_for_train = DataLoader(
             self.trainset_for_train, batch_size=self.args.batch_size, shuffle=True, num_workers=self.args.workers,
-            worker_init_fn=lambda worker_id: random.seed(self.args.seed + worker_id))
+            worker_init_fn=lambda worker_id: random.seed(self.args.seed + worker_id)
+            )
         trainset_loader_for_infer = DataLoader(
-            self.trainset_for_infer, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.workers)
+            self.trainset_for_infer, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.workers,
+            )
         valset_loader = DataLoader(
-            self.val_set, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.workers)
-        return trainset_loader_for_train, trainset_loader_for_infer, valset_loader
+            self.val_set, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.workers,
+            )
+        outlier_loader = DataLoader(
+            self.outlier_data, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.workers,
+            worker_init_fn=lambda worker_id: random.seed(self.args.seed + worker_id)
+            )
+        return trainset_loader_for_train, trainset_loader_for_infer, valset_loader, outlier_loader
+
