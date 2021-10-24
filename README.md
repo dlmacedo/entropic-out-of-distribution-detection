@@ -12,7 +12,7 @@
 
 ___
 
-# Add seamless and state-of-the-art performance out-of-distribution detection to your project!!!
+# Add seamless and high-performance out-of-distribution detection to your project!!!
 
 ## Replace the SoftMax loss with the IsoMax+ loss changing two lines of code.
 
