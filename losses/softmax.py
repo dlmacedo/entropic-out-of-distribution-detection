@@ -18,7 +18,7 @@ class SoftMaxLossFirstPart(nn.Module):
         #print("softmax loss first part")
         affines = features.matmul(self.weights.t()) + self.bias
         logits = affines
-        # The temperature may be calirated after training for improved predictive uncertainty estimation
+        # The temperature may be calibrated after training for improved predictive uncertainty estimation
         return logits / self.temperature
 
 

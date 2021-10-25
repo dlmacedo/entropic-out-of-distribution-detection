@@ -17,7 +17,7 @@ class IsoMaxLossFirstPart(nn.Module):
         #print("isomax loss first part")
         distances = F.pairwise_distance(features.unsqueeze(2), self.prototypes.t().unsqueeze(0), p=2.0)
         logits = -distances
-        # The temperature may be calirated after training for improved predictive uncertainty estimation
+        # The temperature may be calibrated after training for improved predictive uncertainty estimation
         return logits / self.temperature
 
 
@@ -29,12 +29,12 @@ class IsoMaxLossSecondPart(nn.Module):
         self.entropic_scale = 10.0
 
     def forward(self, logits, targets, debug=False):
-        ################################################################################
-        ################################################################################
-        """Probabilities and logarithms are calculate separately and sequentially!!!"""
-        """Therefore, nn.CrossEntropyLoss() must not be used to calculate the loss!!!"""
-        ################################################################################
-        ################################################################################
+        #############################################################################
+        #############################################################################
+        """Probabilities and logarithms are calculate separately and sequentially"""
+        """Therefore, nn.CrossEntropyLoss() must not be used to calculate the loss"""
+        #############################################################################
+        #############################################################################
         #print("isomax loss second part")
         probabilities_for_training = nn.Softmax(dim=1)(self.entropic_scale * logits[:len(targets)])
         probabilities_at_targets = probabilities_for_training[range(logits.size(0)), targets]
