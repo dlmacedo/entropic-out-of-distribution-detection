@@ -51,3 +51,4 @@ class IsoMaxPlusLossSecondPart(nn.Module):
             intra_logits = intra_inter_logits[intra_inter_logits != float('Inf')]
             inter_logits = inter_intra_logits[inter_intra_logits != float('Inf')]
             return loss, distance_scale.item(), intra_logits, inter_logits
+

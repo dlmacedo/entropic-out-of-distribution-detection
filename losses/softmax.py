@@ -41,3 +41,4 @@ class SoftMaxLossSecondPart(nn.Module):
             inter_logits = inter_intra_logits[inter_intra_logits != float('Inf')]
             distance_scale = 1
             return loss, distance_scale, intra_logits, inter_logits
+
