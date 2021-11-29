@@ -13,5 +13,7 @@ old/
 *.npz
 *.log
 *.pkl
+*.old
 *.ipynb_checkpoints
 .vscode/
+

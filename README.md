@@ -29,9 +29,8 @@ class Model(nn.Module):
 ### Replace the criterion by the IsoMax+ loss second part:
 
 ```python
-model = Model()
 #criterion = nn.CrossEntropyLoss()
-criterion = losses.IsoMaxPlusLossSecondPart(model.classifier)
+criterion = losses.IsoMaxPlusLossSecondPart()
 ```
 
 ## Detect using the minimum distance score:

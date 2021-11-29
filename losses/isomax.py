@@ -4,33 +4,32 @@ import torch
 
 
 class IsoMaxLossFirstPart(nn.Module):
-    """Replaces the model classifier last layer nn.Linear()"""
+    """This part replaces the model classifier output layer nn.Linear()"""
     def __init__(self, num_features, num_classes, temperature=1.0):
         super(IsoMaxLossFirstPart, self).__init__()
         self.num_features = num_features
         self.num_classes = num_classes
+        self.temperature = temperature        
         self.prototypes = nn.Parameter(torch.Tensor(num_classes, num_features))
-        self.temperature = temperature
         nn.init.constant_(self.prototypes, 0.0)
 
     def forward(self, features):
         distances = F.pairwise_distance(features.unsqueeze(2), self.prototypes.t().unsqueeze(0), p=2.0)
         logits = -distances
-        # The temperature may be calibrated after training for improved predictive uncertainty estimation
+        # The temperature may be calibrated after training to improve uncertainty estimation.
         return logits / self.temperature
 
 
 class IsoMaxLossSecondPart(nn.Module):
-    """Replaces the nn.CrossEntropyLoss()"""
-    def __init__(self, model_classifier):
+    """This part replaces the nn.CrossEntropyLoss()"""
+    def __init__(self, entropic_scale=10.0):
         super(IsoMaxLossSecondPart, self).__init__()
-        self.model_classifier = model_classifier
-        self.entropic_scale = 10.0
+        self.entropic_scale = entropic_scale
 
     def forward(self, logits, targets, debug=False):
         #############################################################################
         #############################################################################
-        """Probabilities and logarithms are calculate separately and sequentially"""
+        """Probabilities and logarithms are calculated separately and sequentially"""
         """Therefore, nn.CrossEntropyLoss() must not be used to calculate the loss"""
         #############################################################################
         #############################################################################
@@ -41,9 +40,10 @@ class IsoMaxLossSecondPart(nn.Module):
         if not debug:
             return loss
         else:
-            targets_one_hot = torch.eye(self.model_classifier.prototypes.size(0))[targets].long().cuda()
+            targets_one_hot = torch.eye(distances.size(1))[targets].long().cuda()
             intra_inter_distances = torch.where(targets_one_hot != 0, distances, torch.Tensor([float('Inf')]).cuda())
             inter_intra_distances = torch.where(targets_one_hot != 0, torch.Tensor([float('Inf')]).cuda(), distances)
             intra_distances = intra_inter_distances[intra_inter_distances != float('Inf')]
             inter_distances = inter_intra_distances[inter_intra_distances != float('Inf')]
             return loss, 1.0, intra_distances, inter_distances
+

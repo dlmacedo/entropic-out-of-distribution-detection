@@ -53,7 +53,7 @@ model = model.to(device)
 
 ##################################################################
 #criterion = nn.CrossEntropyLoss()
-criterion = losses.IsoMaxPlusLossSecondPart(model.classifier)
+criterion = losses.IsoMaxPlusLossSecondPart()
 ##################################################################
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, nesterov=True, weight_decay=1*1e-4)

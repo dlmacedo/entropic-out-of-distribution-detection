@@ -50,7 +50,7 @@ class ClassifierAgent:
         print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n")
 
         # create loss
-        self.criterion = loss_second_part(self.model.classifier)   
+        self.criterion = loss_second_part()   
 
         parameters = self.model.parameters()
         self.optimizer = torch.optim.SGD(
