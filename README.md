@@ -1,4 +1,4 @@
-**PyTorch has recently changed the behavior of F.pairwise_distance in PyTorch 1.10. We replaced it for torch.cdist to make our code work fine in also in PyTorch 1.10. Hence, if you tested our solution before using PyTorch 1.10, please give a "git pull" and try again with this new code.**
+**PyTorch has recently changed the behavior of F.pairwise_distance in PyTorch 1.10. We replaced it with torch.cdist to fix this. Hence, if you tested our solution with PyTorch 1.10 before, please execute a "git pull" and try again.**
 
 ___
 
