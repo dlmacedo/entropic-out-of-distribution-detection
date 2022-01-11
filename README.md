@@ -1,4 +1,5 @@
-**PyTorch has recently changed the behavior of F.pairwise_distance. We changed it to torch.cdist to make our code work fine in more recent PyTorch versions. Hence, if you tested our solution before using PyTorch 1.9 or 1.10, please give a "git pull" and try again with this new code.**
+**PyTorch has recently changed the behavior of F.pairwise_distance in PyTorch 1.10. We replaced it for torch.cdist to make our code work fine in also in PyTorch 1.10. Hence, if you tested our solution before using PyTorch 1.10, please give a "git pull" and try again with this new code.**
+
 ___
 
 # Entropic Out-of-Distribution Detection
