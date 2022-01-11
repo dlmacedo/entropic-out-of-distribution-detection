@@ -140,13 +140,6 @@ def cosine_similarity(features, prototypes):
     return F.cosine_similarity(features.unsqueeze(2), prototypes.t().unsqueeze(0), dim=1, eps=1e-6)
 
 
-def euclidean_distances(features, prototypes, pnorm):
-    if len(prototypes.size()) == 2:
-        return F.pairwise_distance(features.unsqueeze(2), prototypes.t().unsqueeze(0), p=pnorm)
-    else:
-        return F.pairwise_distance(features.unsqueeze(2).unsqueeze(3), prototypes.unsqueeze(0).permute(0, 3, 1, 2), p=pnorm)
-
-
 def mahalanobis_distances(features, prototypes, precisions):
     diff = features.unsqueeze(2) - prototypes.t().unsqueeze(0)
     diff2 = features.t().unsqueeze(0) - prototypes.unsqueeze(2)

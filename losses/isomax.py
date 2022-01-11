@@ -14,7 +14,8 @@ class IsoMaxLossFirstPart(nn.Module):
         nn.init.constant_(self.prototypes, 0.0)
 
     def forward(self, features):
-        distances = F.pairwise_distance(features.unsqueeze(2), self.prototypes.t().unsqueeze(0), p=2.0)
+        #distances = F.pairwise_distance(features.unsqueeze(2), self.prototypes.t().unsqueeze(0), p=2.0)
+        distances = torch.cdist(features, self.prototypes, p=2.0, compute_mode= "donot_use_mm_for_euclid_dist")
         logits = -distances
         # The temperature may be calibrated after training to improve uncertainty estimation.
         return logits / self.temperature
