@@ -4,7 +4,7 @@ ___
 
 # Entropic Out-of-Distribution Detection
 
-<img align="center" src="assets/task.png" width="750">
+<img align="center" src="assets/task1.png" width="750">
 
 >>**We call our approach seamless because it neither presents special requirements (e.g., hyperparameter tuning, additional data) nor produces side effects (e.g., inefficient inference or detection, classification accuracy drop).**
 
@@ -12,7 +12,7 @@ ___
 
  >>**Besides all the above, the IsoMax+ loss (the most recent version) produces state-of-the-art out-of-distribution detection performance.**
 
-<img align="center" src="assets/presentation.png" width="750">
+<img align="center" src="assets/presentation1.png" width="750">
 
 ___
 
@@ -106,13 +106,13 @@ tar xvf LSUN_resize.tar.gz
 
 The paper "Entropic Out-of-Distribution Detection" [(arXiv)](https://arxiv.org/abs/1908.05569) [(IJCNN 2021)](https://ieeexplore.ieee.org/document/9533899) proposes the IsoMax loss, which works as a drop-in replacement of the SoftMax loss. The solution is seamless. Hence, it does not produce classification accuracy drop while significantly improves the OOD detection performance. Additionally, unlike other OOD detection approaches, IsoMax loss delivers inferences as fast and energy-efficient as SoftMax loss-trained neural networks. Our solution does not require hyperparameter tuning. No additional data are needed. Finally, the out-of-distribution detection is performed using the speedy entropic score. 
 
-<img align="center" src="assets/paper1_figure1.png" width="750">
+<img align="center" src="assets/paper1_fig1.png" width="750">
 
 ## Entropic Out-of-Distribution Detection: Seamless Detection of Unknown Examples (IEEE TNNLS 2021)
 
 The paper "Entropic Out-of-Distribution Detection: Seamless Detection of Unknown Examples" [(arXiv)](https://arxiv.org/abs/2006.04005) [(IEEE TNNLS 2021)](https://ieeexplore.ieee.org/document/9556483) is the journal version of the paper "Entropic Out-of-Distribution Detection". It presents additional explanations, experiments, and analyses regarding the IsoMax loss. 
 
-<img align="center" src="assets/paper2_figure1.png" width="750">
+<img align="center" src="assets/paper2_fig1.png" width="750">
 
 ## Enhanced Isotropy Maximization Loss: Seamless and High-Performance Out-of-Distribution Detection Simply Replacing the SoftMax Loss
 
@@ -120,13 +120,13 @@ The paper "Enhanced Isotropy Maximization Loss: Seamless and High-Performance Ou
 
 >>**From now on, use the IsoMax+ loss combined with the minimum distance score rather than the IsoMax loss combined with the entropic score.**
 
-<img align="center" src="assets/paper3_figure1.png" width="750">
+<img align="center" src="assets/paper3_fig1.png" width="750">
 
-<img align="center" src="assets/paper3_figure2.png" width="750">
+<img align="center" src="assets/paper3_fig2.png" width="750">
 
-<img align="center" src="assets/paper3_figure3.png" width="750">
+<img align="center" src="assets/paper3_fig3.png" width="750">
 
-<img align="center" src="assets/paper3_figure4.png" width="750">
+<img align="center" src="assets/paper3_fig4.png" width="750">
 
 # Citation
 
