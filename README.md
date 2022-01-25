@@ -55,31 +55,22 @@ ___
 
 # Code
 
-## Software Requirements
+## Software requirements
 
 Much code reused from "[deep_Mahalanobis_detector](https://github.com/pokaxpoka/deep_Mahalanobis_detector)" and [odin-pytorch](https://github.com/facebookresearch/odin).
 
-* [Pytorch](http://pytorch.org/)
-* [TorchVision](https://github.com/pytorch/vision)
-* [TorchNet](https://github.com/pytorch/tnt)
-* [TorchMetrics](https://github.com/PyTorchLightning/metrics)
-* [Numpy](https://www.numpy.org/)
-* [Pandas](https://pandas.pydata.org/)
-* [Scikit-Learn](https://scikit-learn.org/stable/)
-* [TQDM](https://github.com/tqdm/tqdm)
+### Please, install all package requirments runing the command bellow:
 
-## Downloading Out-of-Distribution Data
-
-### We used download links of two out-of-distribution datasets from [odin-pytorch](https://github.com/facebookresearch/odin):
-
-* [Tiny-ImageNet (resize)](https://www.dropbox.com/s/kp3my3412u5k9rl/Imagenet_resize.tar.gz)
-* [LSUN (resize)](https://www.dropbox.com/s/moqh2wh8696c3yl/LSUN_resize.tar.gz)
-
-### Place the above files to a folder called `data` and run the following commands in the mentioned directory:
-
+```bash
+pip install -r requirements.txt
 ```
-tar xvf Imagenet_resize.tar.gz
-tar xvf LSUN_resize.tar.gz
+
+## Preparing the data
+
+### Please, move to the `data` directory and run all the prepare data bash scripts:
+
+```bash
+./prepare-cifar.sh # downloads out-of-distrbution data for CIFAR datasets.
 ```
 
 ## Reproducing Experiments

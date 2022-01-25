@@ -1,0 +1,15 @@
+torch
+torchaudio
+torchtext
+torchvision
+torchmetrics
+torchnet
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+seaborn
+tqdm
+opencv-python
+soundfile

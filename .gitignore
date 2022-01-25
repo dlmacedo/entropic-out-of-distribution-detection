@@ -2,7 +2,7 @@ __pycache__
 experiments/
 checkpoint/
 temporary/
-data/
+data/*/
 old/
 *.gz
 *.pth
