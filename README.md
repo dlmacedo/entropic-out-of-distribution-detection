@@ -97,7 +97,7 @@ tar xvf LSUN_resize.tar.gz
 ### Print the experiment results:
 
 ```
-./analize.sh ood
+./analize.sh
 ```
 
 # Papers
