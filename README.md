@@ -1,7 +1,3 @@
-
-### **Please, give a star to this repository if you like it!**
-___
-
 # Entropic Out-of-Distribution Detection
 
 <img align="center" src="assets/task1.png" width="750">
