@@ -1,3 +1,5 @@
+# **Visit the repository of our newest work: [Distinction Maximization Loss: Efficiently Improving Classification Accuracy, Uncertainty Estimation, and Out-of-Distribution Detection Simply Replacing the Loss and Calibrating](https://github.com/dlmacedo/distinction-maximization-loss)**
+
 # Entropic Out-of-Distribution Detection
 
 <img align="center" src="assets/task1.png" width="750">
