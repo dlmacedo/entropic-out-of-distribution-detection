@@ -101,15 +101,14 @@ class DenseNet3(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.in_planes = in_planes
 
-        ################
+        #########################################################
         #self.classifier = nn.Linear(in_planes, num_classes)
         self.classifier = loss_first_part(in_planes, num_classes)
-        ################
+        #########################################################
       
         # Official init from torch repo.
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
-                #nn.init.kaiming_normal_(m.weight)
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)

@@ -102,10 +102,10 @@ class DenseNet3(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.in_planes = in_planes
 
-        #############################################################################
+        ########################################################################
         #self.classifier = nn.Linear(in_planes, num_classes)
         self.classifier = losses.IsoMaxPlusLossFirstPart(in_planes, num_classes)
-        #############################################################################
+        ########################################################################
       
         # Official init from torch repo.
         for m in self.modules():

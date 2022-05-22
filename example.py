@@ -12,7 +12,6 @@ import random
 import numpy
 import torchnet as tnt
 
-
 base_seed = 42
 random.seed(base_seed)
 numpy.random.seed(base_seed)
@@ -37,24 +36,19 @@ transform_test = transforms.Compose([
     transforms.Normalize((0.491, 0.482, 0.446), (0.247, 0.243, 0.261)),])
 
 trainset = torchvision.datasets.CIFAR10(root='data/cifar10', train=True, download=True, transform=transform_train)
-trainloader = torch.utils.data.DataLoader(
-    trainset, batch_size=64, shuffle=True, num_workers=4,
-    worker_init_fn=lambda worker_id: random.seed(base_seed + worker_id),
-    )
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True, num_workers=4, worker_init_fn=lambda worker_id: random.seed(base_seed + worker_id))
 testset = torchvision.datasets.CIFAR10(root='data/cifar10', train=False, download=True, transform=transform_test)
-testloader = torch.utils.data.DataLoader(
-    testset, batch_size=64, shuffle=False, num_workers=4,
-    )
+testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=False, num_workers=4)
 
 # Model
 print('==> Building model...')
 model = net.DenseNet3(100, 10)
 model = model.to(device)
 
-##################################################################
+#############################################
 #criterion = nn.CrossEntropyLoss()
 criterion = losses.IsoMaxPlusLossSecondPart()
-##################################################################
+#############################################
 
 optimizer = torch.optim.SGD(model.parameters(), lr=0.1, momentum=0.9, nesterov=True, weight_decay=1*1e-4)
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[150, 200, 250], gamma=0.1)

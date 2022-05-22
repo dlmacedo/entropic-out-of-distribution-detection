@@ -1,5 +1,5 @@
 import torch
-from torchvision import datasets, transforms
+from torchvision import datasets
 import os
 
 
@@ -10,13 +10,11 @@ def getSVHN(batch_size, TF, data_root='data', train=True, val=True, **kwargs):
     ds = []
     if train:
         train_loader = torch.utils.data.DataLoader(
-            datasets.SVHN(root=data_root, split='train', download=True, transform=TF),
-            batch_size=batch_size, shuffle=True, **kwargs)
+            datasets.SVHN(root=data_root, split='train', download=True, transform=TF), batch_size=batch_size, shuffle=True, **kwargs)
         ds.append(train_loader)
     if val:
         test_loader = torch.utils.data.DataLoader(
-            datasets.SVHN(root=data_root, split='test', download=True, transform=TF,),
-            batch_size=batch_size, shuffle=False, **kwargs)
+            datasets.SVHN(root=data_root, split='test', download=True, transform=TF,), batch_size=batch_size, shuffle=False, **kwargs)
         ds.append(test_loader)
     ds = ds[0] if len(ds) == 1 else ds
     return ds
@@ -29,13 +27,11 @@ def getCIFAR10(batch_size, TF, data_root='data', train=True, val=True, **kwargs)
     ds = []
     if train:
         train_loader = torch.utils.data.DataLoader(
-            datasets.CIFAR10(root=data_root, train=True, download=True, transform=TF),
-            batch_size=batch_size, shuffle=True, **kwargs)
+            datasets.CIFAR10(root=data_root, train=True, download=True, transform=TF), batch_size=batch_size, shuffle=True, **kwargs)
         ds.append(train_loader)
     if val:
         test_loader = torch.utils.data.DataLoader(
-            datasets.CIFAR10(root=data_root, train=False, download=True, transform=TF),
-            batch_size=batch_size, shuffle=False, **kwargs)
+            datasets.CIFAR10(root=data_root, train=False, download=True, transform=TF), batch_size=batch_size, shuffle=False, **kwargs)
         ds.append(test_loader)
     ds = ds[0] if len(ds) == 1 else ds
     return ds
@@ -48,13 +44,11 @@ def getCIFAR100(batch_size, TF, data_root='data', TTF=None, train=True, val=True
     ds = []
     if train:
         train_loader = torch.utils.data.DataLoader(
-            datasets.CIFAR100(root=data_root, train=True, download=True, transform=TF, target_transform=TTF),
-            batch_size=batch_size, shuffle=True, **kwargs)
+            datasets.CIFAR100(root=data_root, train=True, download=True, transform=TF, target_transform=TTF), batch_size=batch_size, shuffle=True, **kwargs)
         ds.append(train_loader)
     if val:
         test_loader = torch.utils.data.DataLoader(
-            datasets.CIFAR100(root=data_root, train=False, download=True, transform=TF, target_transform=TTF),
-            batch_size=batch_size, shuffle=False, **kwargs)
+            datasets.CIFAR100(root=data_root, train=False, download=True, transform=TF, target_transform=TTF), batch_size=batch_size, shuffle=False, **kwargs)
         ds.append(test_loader)
     ds = ds[0] if len(ds) == 1 else ds
     return ds

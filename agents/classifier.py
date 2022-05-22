@@ -53,14 +53,8 @@ class ClassifierAgent:
         self.criterion = loss_second_part()   
 
         parameters = self.model.parameters()
-        self.optimizer = torch.optim.SGD(
-            parameters, lr=self.args.original_learning_rate,
-            momentum=self.args.momentum, nesterov=True, weight_decay=args.weight_decay)
-
-        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(
-            self.optimizer, milestones=self.args.learning_rate_decay_epochs,
-            gamma=args.learning_rate_decay_rate)
-
+        self.optimizer = torch.optim.SGD(parameters, lr=self.args.original_learning_rate,momentum=self.args.momentum, nesterov=True, weight_decay=args.weight_decay)
+        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer, milestones=self.args.learning_rate_decay_epochs, gamma=args.learning_rate_decay_rate)
         print("\nTRAIN:", self.criterion, self.optimizer, self.scheduler)
 
     def train_classify(self):
