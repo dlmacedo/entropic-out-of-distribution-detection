@@ -69,10 +69,12 @@ class ImageLoader:
 
     def get_loaders(self):
         trainset_loader_for_train = DataLoader(
-            self.trainset_for_train, batch_size=self.args.batch_size, shuffle=True, num_workers=self.args.workers, worker_init_fn=lambda worker_id: random.seed(self.args.seed + worker_id))
+            self.trainset_for_train, batch_size=self.args.batch_size, shuffle=True, num_workers=self.args.workers,
+            worker_init_fn=lambda worker_id: random.seed(self.args.seed + worker_id))
         trainset_loader_for_infer = DataLoader(self.trainset_for_infer, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.workers,)
         valset_loader = DataLoader(self.val_set, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.workers)
         outlier_loader = DataLoader(
-            self.outlier_data, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.workers, worker_init_fn=lambda worker_id: random.seed(self.args.seed + worker_id))
+            self.outlier_data, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.workers,
+            worker_init_fn=lambda worker_id: random.seed(self.args.seed + worker_id))
         return trainset_loader_for_train, trainset_loader_for_infer, valset_loader, outlier_loader
 
