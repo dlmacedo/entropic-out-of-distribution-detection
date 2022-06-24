@@ -140,10 +140,10 @@ Please, cite our papers if you use our losses in your works:
   author={Macêdo, David and Ren, Tsang Ing and Zanchettin, Cleber and Oliveira, Adriano L. I. and Ludermir, Teresa},
   journal={IEEE Transactions on Neural Networks and Learning Systems}, 
   title={Entropic Out-of-Distribution Detection: Seamless Detection of Unknown Examples}, 
-  year={2021},
-  volume={},
-  number={},
-  pages={1-15},
+  year={2022},
+  volume={33},
+  number={6},
+  pages={2350-2364},
   doi={10.1109/TNNLS.2021.3112897}}
 ```
 
