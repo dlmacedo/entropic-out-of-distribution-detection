@@ -125,7 +125,8 @@ Please, cite our papers if you use our losses in your works:
 
 ```bibtex
 @INPROCEEDINGS{9533899,
-  author={Macêdo, David and Ren, Tsang Ing and Zanchettin, Cleber and Oliveira, Adriano L. I. and Ludermir, Teresa},
+  author={Macêdo, David and Ren, Tsang Ing and Zanchettin, Cleber and Oliveira, 
+  Adriano L. I. and Ludermir, Teresa},
   booktitle={2021 International Joint Conference on Neural Networks (IJCNN)}, 
   title={Entropic Out-of-Distribution Detection}, 
   year={2021},
@@ -137,7 +138,8 @@ Please, cite our papers if you use our losses in your works:
 
 ```bibtex
 @ARTICLE{9556483,
-  author={Macêdo, David and Ren, Tsang Ing and Zanchettin, Cleber and Oliveira, Adriano L. I. and Ludermir, Teresa},
+  author={Macêdo, David and Ren, Tsang Ing and Zanchettin, Cleber and Oliveira, 
+  Adriano L. I. and Ludermir, Teresa},
   journal={IEEE Transactions on Neural Networks and Learning Systems}, 
   title={Entropic Out-of-Distribution Detection: Seamless Detection of Unknown Examples}, 
   year={2022},
@@ -149,11 +151,11 @@ Please, cite our papers if you use our losses in your works:
 
 ```bibtex
 @misc{macêdo2021seamless,
-      title={Enhanced Isotropy Maximization Loss: Seamless and High-Performance Out-of-Distribution Detection Simply Replacing the SoftMax Loss}, 
-      author={David Macêdo and Teresa Ludermir},
-      year={2021},
-      eprint={2105.14399},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG}
-}
+  title={Enhanced Isotropy Maximization Loss: Seamless and High-Performance
+  Out-of-Distribution Detection Simply Replacing the SoftMax Loss}, 
+  author={David Macêdo and Teresa Ludermir},
+  year={2021},
+  eprint={2105.14399},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG}}
 ```
