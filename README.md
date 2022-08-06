@@ -130,8 +130,6 @@ Please, cite our papers if you use our losses in your works:
   booktitle={2021 International Joint Conference on Neural Networks (IJCNN)}, 
   title={Entropic Out-of-Distribution Detection}, 
   year={2021},
-  volume={},
-  number={},
   pages={1-8},
   doi={10.1109/IJCNN52387.2021.9533899}}
 ```
