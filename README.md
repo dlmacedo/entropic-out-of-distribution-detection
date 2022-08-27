@@ -6,7 +6,7 @@
 
 # Entropic Out-of-Distribution Detection
 
-<img align="center" src="assets/task1.png" width="750">
+<img align="center" src="assets/isomax.png" width="750">
 
 >>**We call our approach seamless because it neither presents special requirements (e.g., hyperparameter tuning, additional data) nor produces side effects (e.g., inefficient inference or detection, classification accuracy drop).**
 
