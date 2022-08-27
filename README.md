@@ -1,6 +1,8 @@
-## **Visit "The Robust Deep Learning Library" (our newest work) to use this loss and much more easily:**
+# **Visit "The Robust Deep Learning Library" (our newest work) to use this loss and much more easily:**
 
-## **[The Robust Deep Learning Library](https://github.com/dlmacedo/robust-deep-learning)**
+# **[The Robust Deep Learning Library](https://github.com/dlmacedo/robust-deep-learning)**
+
+---
 
 # Entropic Out-of-Distribution Detection
 
