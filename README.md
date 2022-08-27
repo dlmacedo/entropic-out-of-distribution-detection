@@ -1,6 +1,6 @@
-## **Visit the repository of our newest work:**
+## **Visit "The Robust Deep Learning Library" (our newest work) to use this loss and much more easily:**
 
-## **[Distinction Maximization Loss: Efficiently Improving Classification Accuracy, Uncertainty Estimation, and Out-of-Distribution Detection Simply Replacing the Loss and Calibrating](https://github.com/dlmacedo/distinction-maximization-loss)**
+## **[The Robust Deep Learning Library](https://github.com/dlmacedo/robust-deep-learning)**
 
 # Entropic Out-of-Distribution Detection
 
