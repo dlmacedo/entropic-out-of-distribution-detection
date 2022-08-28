@@ -1,6 +1,4 @@
-torch
-torchaudio
-torchtext
+torch >= 1.10
 torchvision
 torchmetrics
 torchnet
@@ -9,7 +7,4 @@ pandas
 scipy
 scikit-learn
 matplotlib
-seaborn
 tqdm
-opencv-python
-soundfile
