@@ -149,13 +149,36 @@ Please, cite our papers if you use our losses in your works:
 ```
 
 ```bibtex
-@misc{macêdo2021seamless,
-  title={Enhanced Isotropy Maximization Loss: Seamless and High-Performance
-  Out-of-Distribution Detection Simply Replacing the SoftMax Loss}, 
-  author={David Macêdo and Teresa Ludermir},
-  year={2021},
-  eprint={2105.14399},
-  archivePrefix={arXiv},
-  primaryClass={cs.LG}
+@article{DBLP:journals/corr/abs-2105-14399,
+  author    = {David Mac{\^{e}}do and
+               Teresa Bernarda Ludermir},
+  title     = {Enhanced Isotropy Maximization Loss: 
+  Seamless and High-Performance Out-of-Distribution Detection
+  Simply Replacing the SoftMax Loss},
+  journal   = {CoRR},
+  volume    = {abs/2105.14399},
+  year      = {2021},
+  url       = {https://arxiv.org/abs/2105.14399},
+  eprinttype = {arXiv},
+  eprint    = {2105.14399},
+  timestamp = {Wed, 02 Jun 2021 11:46:42 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2105-14399.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 ```
+
+```bibtex
+@article{DBLP:journals/corr/abs-2208-03566,
+  author    = {David Mac{\^{e}}do},
+  title     = {Towards Robust Deep Learning using Entropic Losses},
+  journal   = {CoRR},
+  volume    = {abs/2208.03566},
+  year      = {2022},
+  url       = {https://doi.org/10.48550/arXiv.2208.03566},
+  doi       = {10.48550/arXiv.2208.03566},
+  eprinttype = {arXiv},
+  eprint    = {2208.03566},
+  timestamp = {Wed, 10 Aug 2022 14:49:54 +0200},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2208-03566.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}```
