@@ -16,8 +16,6 @@
 
 <img align="center" src="assets/presentation1.png" width="750">
 
-___
-
 # Add seamless and high-performance out-of-distribution detection to your project!!!
 
 ## Replace the SoftMax loss with the IsoMax+ loss changing two lines of code.
@@ -53,7 +51,6 @@ score = outputs.max(dim=1)[0] # this is the minimum distance score for detection
 ```
 python example.py
 ```
-___
 
 # Code
 
@@ -133,7 +130,8 @@ Please, cite our papers if you use our losses in your works:
   title={Entropic Out-of-Distribution Detection}, 
   year={2021},
   pages={1-8},
-  doi={10.1109/IJCNN52387.2021.9533899}}
+  doi={10.1109/IJCNN52387.2021.9533899}
+}
 ```
 
 ```bibtex
@@ -146,7 +144,8 @@ Please, cite our papers if you use our losses in your works:
   volume={33},
   number={6},
   pages={2350-2364},
-  doi={10.1109/TNNLS.2021.3112897}}
+  doi={10.1109/TNNLS.2021.3112897}
+}
 ```
 
 ```bibtex
@@ -157,5 +156,6 @@ Please, cite our papers if you use our losses in your works:
   year={2021},
   eprint={2105.14399},
   archivePrefix={arXiv},
-  primaryClass={cs.LG}}
+  primaryClass={cs.LG}
+}
 ```
