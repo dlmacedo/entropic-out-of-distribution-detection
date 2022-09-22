@@ -82,12 +82,12 @@ pip install -r requirements.txt
 ./run_svhn.sh
 ```
 
-## Analizing Results
+## Analyzing Results
 
 ### Print the experiment results:
 
 ```
-./analize.sh
+./analyze.sh
 ```
 
 # Papers
